@@ -1,10 +1,12 @@
 package com.villalobos.caballoapp
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.villalobos.caballoapp.databinding.FragmentTutorialPasoBinding
 
@@ -37,7 +39,12 @@ class TutorialPasoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val paso = arguments?.getSerializable(ARG_PASO) as? TutorialPaso
+        val paso = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getSerializable(ARG_PASO, TutorialPaso::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getSerializable(ARG_PASO) as? TutorialPaso
+        }
         paso?.let { configurarPaso(it) }
     }
 
@@ -47,11 +54,13 @@ class TutorialPasoFragment : Fragment() {
             errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
             errorMessage = "Error al configurar paso del tutorial"
         ) {
+            val blackColor = ContextCompat.getColor(requireContext(), android.R.color.black)
+            
             // Configurar contenido básico
             binding.tvTituloPaso.text = paso.titulo
-            binding.tvTituloPaso.setTextColor(resources.getColor(android.R.color.black, null))
+            binding.tvTituloPaso.setTextColor(blackColor)
             binding.tvDescripcionPaso.text = paso.descripcion
-            binding.tvDescripcionPaso.setTextColor(resources.getColor(android.R.color.black, null))
+            binding.tvDescripcionPaso.setTextColor(blackColor)
             binding.imgPasoTutorial.setImageResource(paso.imagen)
 
             // Animar la imagen del tutorial
@@ -67,7 +76,7 @@ class TutorialPasoFragment : Fragment() {
                     val textView = TextView(requireContext()).apply {
                         text = "• $caracteristica"
                         textSize = 14f
-                        setTextColor(resources.getColor(android.R.color.black, null))
+                        setTextColor(blackColor)
                         setPadding(0, 0, 0, 16)
                         setCompoundDrawablesWithIntrinsicBounds(
                             android.R.drawable.btn_star_big_on, 0, 0, 0

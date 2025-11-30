@@ -1,47 +1,41 @@
 package com.villalobos.caballoapp
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import com.villalobos.caballoapp.databinding.ActivityDetalleMusculoBinding
+import com.villalobos.caballoapp.ui.detail.DetalleMusculoViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Activity para mostrar el detalle de un músculo.
+ * Usa arquitectura MVVM con Hilt para inyección de dependencias.
+ */
+@AndroidEntryPoint
 class DetalleMusculo : BaseNavigationActivity() {
 
-    private lateinit var enlace: ActivityDetalleMusculoBinding
-    private var musculo: Musculo? = null
-    private var regionId: Int = 1
+    // MVVM: ViewModel inyectado con Hilt
+    private val viewModel: DetalleMusculoViewModel by viewModels()
+    
+    private lateinit var binding: ActivityDetalleMusculoBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         try {
-            enlace = ActivityDetalleMusculoBinding.inflate(layoutInflater)
-            setContentView(enlace.root)
+            binding = ActivityDetalleMusculoBinding.inflate(layoutInflater)
+            setContentView(binding.root)
 
-            // Obtener parámetros del intent con validación
-            obtenerParametrosIntent()
+            // Obtener parámetros y cargar datos
+            val musculoId = intent.getIntExtra("MUSCULO_ID", 0)
+            val regionId = intent.getIntExtra("REGION_ID", 1)
+            
+            viewModel.loadMusculo(musculoId, regionId)
 
-            // Validar datos del músculo
-            if (!ErrorHandler.validarMusculo(musculo)) {
-                ErrorHandler.handleError(
-                    context = this,
-                    throwable = Exception("Datos de músculo inválidos"),
-                    errorType = ErrorHandler.ErrorType.DATA_LOADING_ERROR,
-                    userMessage = "Error al cargar información del músculo",
-                    canRecover = true,
-                    recoveryAction = { finish() }
-                )
-                return
-            }
-
-            // Configurar la interfaz
-            configurarInterfaz()
-
-            // Configurar botón volver
-            enlace.btnVolver.setOnClickListener {
-                finish()
-            }
+            setupUI()
+            observeViewModel()
 
             // Configurar el botón de inicio
-            setupHomeButton(enlace.btnHome)
+            setupHomeButton(binding.btnHome)
 
             // Aplicar colores de accesibilidad
             applyActivityAccessibilityColors()
@@ -58,93 +52,97 @@ class DetalleMusculo : BaseNavigationActivity() {
         }
     }
 
-    private fun obtenerParametrosIntent() {
-        ErrorHandler.safeExecute(
-            context = this,
-            errorType = ErrorHandler.ErrorType.INTENT_ERROR,
-            errorMessage = "Error al obtener parámetros de navegación"
-        ) {
-            val musculoId = intent.getIntExtra("MUSCULO_ID", 0)
-            regionId = intent.getIntExtra("REGION_ID", 1)
-
-            if (musculoId == 0) {
-                throw IllegalArgumentException("ID de músculo inválido")
-            }
-
-            // Obtener información del músculo
-            musculo = DatosMusculares.obtenerMusculoPorId(musculoId)
-
-            if (musculo == null) {
-                throw IllegalStateException("Músculo no encontrado con ID: $musculoId")
-            }
+    private fun setupUI() {
+        binding.btnVolver.setOnClickListener {
+            viewModel.navigateBack()
         }
     }
 
-    private fun configurarInterfaz() {
-        ErrorHandler.safeExecute(
-            context = this,
-            errorType = ErrorHandler.ErrorType.DATA_LOADING_ERROR,
-            errorMessage = "Error al configurar interfaz de usuario"
-        ) {
-            musculo?.let { musculoInfo ->
-                // Configurar título
-                enlace.tvTituloMusculo.text = musculoInfo.nombre
+    private fun observeViewModel() {
+        // Observar estado
+        viewModel.state.observe(this) { state ->
+            if (state.hasValidData) {
+                state.musculo?.let { musculo ->
+                    // Configurar título
+                    binding.tvTituloMusculo.text = musculo.nombre
 
-                // Configurar imagen específica del músculo
-                configurarImagenMusculo()
+                    // Configurar información del músculo
+                    binding.tvOrigenTexto.text = viewModel.getOrigen()
+                    binding.tvInsercionTexto.text = viewModel.getInsercion()
+                    binding.tvFuncionTexto.text = viewModel.getFuncion()
 
-                // Configurar información del músculo
-                enlace.tvOrigenTexto.text =
-                    musculoInfo.origen.ifBlank { "Información no disponible" }
-                enlace.tvInsercionTexto.text =
-                    musculoInfo.insercion.ifBlank { "Información no disponible" }
-                enlace.tvFuncionTexto.text =
-                    musculoInfo.funcion.ifBlank { "Información no disponible" }
+                    // Configurar imagen
+                    configurarImagenMusculo(state.imageName)
+                }
             }
-        }
-    }
 
-    private fun configurarImagenMusculo() {
-        ErrorHandler.safeExecute(
-            context = this,
-            errorType = ErrorHandler.ErrorType.IMAGE_LOADING_ERROR,
-            errorMessage = "Error al cargar imagen del músculo"
-        ) {
-            musculo?.let { musculoInfo ->
-                // Obtener el nombre de la imagen sin extensión (si trae .png o .jpg se elimina)
-                val imageName = musculoInfo.imagen
-                    ?.substringBeforeLast(".")
-                    ?.lowercase()   // opcional, por si hay mayúsculas
-                    ?: ""
-
-                // Buscar el recurso en drawable
-                val imageResource = resources.getIdentifier(
-                    imageName,
-                    "drawable",
-                    packageName
+            state.error?.let { error ->
+                ErrorHandler.handleError(
+                    context = this,
+                    throwable = Exception(error),
+                    errorType = ErrorHandler.ErrorType.DATA_LOADING_ERROR,
+                    userMessage = error,
+                    canRecover = true,
+                    recoveryAction = { finish() }
                 )
+            }
+        }
 
-                if (imageResource != 0) {
-                    enlace.imgMusculoDetalle.setImageResource(imageResource)
-                } else {
-                    // Si no existe, usar una imagen predeterminada
+        // Observar eventos
+        viewModel.event.observe(this) { event ->
+            when (event) {
+                is DetalleMusculoViewModel.DetalleEvent.NavigateBack -> {
+                    finish()
+                    viewModel.clearEvent()
+                }
+                is DetalleMusculoViewModel.DetalleEvent.Error -> {
                     ErrorHandler.handleError(
-                        context = this@DetalleMusculo,
-                        throwable = Exception("Imagen no encontrada: ${musculoInfo.imagen}"),
+                        context = this,
+                        throwable = Exception(event.message),
+                        errorType = ErrorHandler.ErrorType.DATA_LOADING_ERROR,
+                        userMessage = event.message,
+                        canRecover = true,
+                        recoveryAction = { finish() }
+                    )
+                    viewModel.clearEvent()
+                }
+                is DetalleMusculoViewModel.DetalleEvent.ImageNotFound -> {
+                    ErrorHandler.handleError(
+                        context = this,
+                        throwable = Exception("Imagen no encontrada: ${event.imageName}"),
                         errorType = ErrorHandler.ErrorType.IMAGE_LOADING_ERROR,
                         level = ErrorHandler.ErrorLevel.WARNING,
                         userMessage = "Imagen no disponible, mostrando predeterminada",
                         canRecover = true
                     )
-                    enlace.imgMusculoDetalle.setImageResource(R.drawable.cabeza_lateral)
+                    viewModel.clearEvent()
                 }
-
-                // Animar la imagen del músculo (si tienes animación)
-                ImageAnimationHelper.animateMuscleDetailImage(enlace.imgMusculoDetalle)
+                null -> { /* No action */ }
             }
         }
     }
 
+    private fun configurarImagenMusculo(imageName: String?) {
+        ErrorHandler.safeExecute(
+            context = this,
+            errorType = ErrorHandler.ErrorType.IMAGE_LOADING_ERROR,
+            errorMessage = "Error al cargar imagen del músculo"
+        ) {
+            val imageResource = if (imageName != null) {
+                resources.getIdentifier(imageName, "drawable", packageName)
+            } else 0
+
+            if (imageResource != 0) {
+                binding.imgMusculoDetalle.setImageResource(imageResource)
+            } else {
+                binding.imgMusculoDetalle.setImageResource(R.drawable.cabeza_lateral)
+                viewModel.notifyImageNotFound()
+            }
+
+            // Animar la imagen del músculo
+            ImageAnimationHelper.animateMuscleDetailImage(binding.imgMusculoDetalle)
+        }
+    }
 
     override fun applyActivityAccessibilityColors() {
         ErrorHandler.safeExecute(

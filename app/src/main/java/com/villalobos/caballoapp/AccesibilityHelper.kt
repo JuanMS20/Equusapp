@@ -35,6 +35,10 @@ object AccesibilityHelper {
     private const val KEY_PRIMARY_COLOR = "primary_color"
     private const val KEY_SECONDARY_COLOR = "secondary_color"
     private const val KEY_TEXT_COLOR = "text_color"
+    
+    // Handler y Runnable para debouncing de aplicación de colores
+    private val colorHandler = android.os.Handler(android.os.Looper.getMainLooper())
+    private var pendingColorRunnable: Runnable? = null
 
     /**
      * Tipos de daltonismo soportados
@@ -88,11 +92,11 @@ object AccesibilityHelper {
         val secondaryColor = prefs.getInt(KEY_SECONDARY_COLOR, -1)
         val textColor = prefs.getInt(KEY_TEXT_COLOR, -1)
 
-        val colorblindType = ColorblindType.values().getOrElse(colorblindTypeOrdinal) {
+        val colorblindType = ColorblindType.entries.getOrElse(colorblindTypeOrdinal) {
             ColorblindType.NONE
         }
 
-        val textScale = TextScale.values().getOrElse(textScaleOrdinal) {
+        val textScale = TextScale.entries.getOrElse(textScaleOrdinal) {
             TextScale.NORMAL
         }
 
@@ -325,6 +329,7 @@ object AccesibilityHelper {
             R.color.text_primary -> ContextCompat.getColor(context, R.color.protanopia_text_primary)
             R.color.text_secondary -> ContextCompat.getColor(context, R.color.protanopia_text_secondary)
             R.color.light_background -> ContextCompat.getColor(context, R.color.protanopia_background)
+            R.color.white, R.color.card_background, R.color.surface_color, R.color.warm_cream -> ContextCompat.getColor(context, R.color.protanopia_background)
             else -> ContextCompat.getColor(context, colorRes)
         }
     }
@@ -345,6 +350,7 @@ object AccesibilityHelper {
             R.color.text_primary -> ContextCompat.getColor(context, R.color.deuteranopia_text_primary)
             R.color.text_secondary -> ContextCompat.getColor(context, R.color.deuteranopia_text_secondary)
             R.color.light_background -> ContextCompat.getColor(context, R.color.deuteranopia_background)
+            R.color.white, R.color.card_background, R.color.surface_color, R.color.warm_cream -> ContextCompat.getColor(context, R.color.deuteranopia_background)
             else -> ContextCompat.getColor(context, colorRes)
         }
     }
@@ -364,6 +370,7 @@ object AccesibilityHelper {
             R.color.info_blue -> ContextCompat.getColor(context, R.color.tritanopia_info)
             R.color.text_primary -> ContextCompat.getColor(context, R.color.tritanopia_text_primary)
             R.color.text_secondary -> ContextCompat.getColor(context, R.color.tritanopia_text_secondary)
+            R.color.white, R.color.card_background, R.color.surface_color, R.color.warm_cream -> ContextCompat.getColor(context, R.color.tritanopia_background)
             R.color.light_background -> ContextCompat.getColor(context, R.color.tritanopia_background)
             else -> ContextCompat.getColor(context, colorRes)
         }
@@ -385,6 +392,7 @@ object AccesibilityHelper {
             R.color.text_primary -> ContextCompat.getColor(context, R.color.achromatopsia_black)
             R.color.text_secondary -> ContextCompat.getColor(context, R.color.achromatopsia_dark_gray)
             R.color.light_background -> ContextCompat.getColor(context, R.color.achromatopsia_white)
+            R.color.white, R.color.card_background, R.color.surface_color, R.color.warm_cream -> ContextCompat.getColor(context, R.color.achromatopsia_white)
             else -> ContextCompat.getColor(context, colorRes)
         }
     }
@@ -685,6 +693,9 @@ object AccesibilityHelper {
         val activity = (context as? android.app.Activity) ?: return
 
         try {
+            // Cancelar cualquier aplicación de colores pendiente para evitar race conditions
+            pendingColorRunnable?.let { colorHandler.removeCallbacks(it) }
+            
             // Aplicar gradiente de fondo según el tipo de daltonismo
             applyBackgroundGradient(context, activity.window.decorView, config.colorblindType)
 
@@ -704,15 +715,20 @@ object AccesibilityHelper {
             activity.window.decorView.requestLayout()
             
             // Aplicar colores nuevamente después de un pequeño delay para asegurar persistencia
-            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                applySpecificColorblindColors(context, activity.window.decorView, config.colorblindType)
+            pendingColorRunnable = Runnable {
+                try {
+                    applySpecificColorblindColors(context, activity.window.decorView, config.colorblindType)
 
-                // LIMPIEZA FINAL: Remover cualquier overlay blanco que haya quedado en imágenes
-                removeWhiteOverlaysFromImages(context, activity.window.decorView)
+                    // LIMPIEZA FINAL: Remover cualquier overlay blanco que haya quedado en imágenes
+                    removeWhiteOverlaysFromImages(context, activity.window.decorView)
 
-                activity.window.decorView.invalidate()
-                Log.d(TAG, "Colores de accesibilidad aplicados agresivamente: ${config.colorblindType.displayName}")
-            }, 100)
+                    activity.window.decorView.invalidate()
+                    Log.d(TAG, "Colores de accesibilidad aplicados: ${config.colorblindType.displayName}")
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error en aplicación diferida de colores: ${e.message}")
+                }
+            }
+            colorHandler.postDelayed(pendingColorRunnable!!, 100)
 
             // Reaplicar colores tras el próximo layout para asegurar que todos los botones tomen el tinte
             reapplyButtonColorsOnNextLayout(context, config.colorblindType)
@@ -844,12 +860,19 @@ if (inDaltonismArea) {
             }
             
             if (view is androidx.cardview.widget.CardView) {
-                if (!isInDaltonismRadioArea(view)) {
-                    // Aplicar color de fondo a tarjetas
-                    val cardColor = getAccessibleColor(context, R.color.white)
+                if (!isInDaltonismRadioArea(view) && !isInQuizRadioArea(view)) {
+                    // Aplicar color de fondo a tarjetas según modo daltonismo
+                    val config = getAccessibilityConfig(context)
+                    val cardColor = when (config.colorblindType) {
+                        ColorblindType.NONE -> ContextCompat.getColor(context, R.color.white)
+                        ColorblindType.PROTANOPIA -> ContextCompat.getColor(context, R.color.protanopia_background)
+                        ColorblindType.DEUTERANOPIA -> ContextCompat.getColor(context, R.color.deuteranopia_background)
+                        ColorblindType.TRITANOPIA -> ContextCompat.getColor(context, R.color.tritanopia_background)
+                        ColorblindType.ACHROMATOPSIA -> ContextCompat.getColor(context, R.color.achromatopsia_white)
+                    }
                     view.setCardBackgroundColor(cardColor)
                 } else {
-                    // Mantener opciones de daltonismo con fondo blanco sólido
+                    // Mantener opciones de daltonismo y quiz con fondo blanco sólido
                     view.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white))
                 }
             }

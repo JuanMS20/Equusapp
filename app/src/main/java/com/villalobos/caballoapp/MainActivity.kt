@@ -1,14 +1,25 @@
 package com.villalobos.caballoapp
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import androidx.activity.viewModels
 import com.villalobos.caballoapp.databinding.ActivityMainBinding
+import com.villalobos.caballoapp.ui.main.MainViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-//ventana de inicio que enlaza con todas las ventanas de la app
+/**
+ * Activity principal que enlaza con todas las ventanas de la app.
+ * Usa arquitectura MVVM con Hilt para inyección de dependencias.
+ */
+@AndroidEntryPoint
 class MainActivity : AccessibilityActivity() {
+
+    // MVVM: ViewModel inyectado con Hilt
+    private val viewModel: MainViewModel by viewModels()
+    
+    private lateinit var binding: ActivityMainBinding
     
     override fun applyActivityAccessibilityColors() {
         ErrorHandler.safeExecute(
@@ -16,62 +27,75 @@ class MainActivity : AccessibilityActivity() {
             errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
             errorMessage = "Error al aplicar colores de accesibilidad específicos de la actividad"
         ) {
-            // Obtener la configuración actual de accesibilidad
             val config = AccesibilityHelper.getAccessibilityConfig(this)
-            
-            // Aplicar colores específicos para los elementos de la actividad principal
             AccesibilityHelper.applySpecificColorblindColors(this, window.decorView, config.colorblindType)
-            
-            // Aplicar gradiente de fondo
             AccesibilityHelper.applyBackgroundGradient(this, window.decorView, config.colorblindType)
         }
     }
 
-    // Declaracion de variables
-    lateinit var btnIniciar: Button
-    lateinit var btnAccesibilidad: Button
-    lateinit var btnCreditos: Button
-    lateinit var btnSalir: Button
-    
-    private lateinit var sharedPreferences: SharedPreferences
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //Validacion del ViewBinding
-        val enlace = ActivityMainBinding.inflate(layoutInflater)
-        
-        // Inicializar SharedPreferences
-        sharedPreferences = getSharedPreferences("tutorial_prefs", MODE_PRIVATE)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        btnIniciar = enlace.btnIniciar
-        btnAccesibilidad = enlace.btnAccesibilidad
-        btnCreditos = enlace.btnCreditos
-        btnSalir = enlace.btnSalir
-
-        btnIniciar.setOnClickListener {
-            btnIniciar(it)
-        }
-
-        btnAccesibilidad.setOnClickListener {
-            btnAccesibilidad(it)
-        }
-
-        btnCreditos.setOnClickListener {
-            btnCreditos(it)
-        }
-
-        btnSalir.setOnClickListener {
-            btnSalir(it)
-        }
-
-        setContentView(enlace.root)
-        
-        // Aplicar configuración de accesibilidad al iniciar
+        setupUI()
+        observeViewModel()
         aplicarConfiguracionAccesibilidad()
-        
-        // Verificar si es primera vez y mostrar tutorial
-        verificarPrimeraVez()
+    }
+
+    private fun setupUI() {
+        // Configurar listeners usando el ViewModel
+        binding.btnIniciar.setOnClickListener {
+            viewModel.navigateToRegionMenu()
+        }
+
+        binding.btnAccesibilidad.setOnClickListener {
+            viewModel.navigateToAccessibility()
+        }
+
+        binding.btnCreditos.setOnClickListener {
+            viewModel.navigateToCredits()
+        }
+
+        binding.btnSalir.setOnClickListener {
+            viewModel.exitApp()
+        }
+    }
+
+    private fun observeViewModel() {
+        // Observar eventos de navegación
+        viewModel.event.observe(this) { event ->
+            when (event) {
+                is MainViewModel.MainEvent.NavigateToRegionMenu -> {
+                    startActivity(Intent(this, RegionMenu::class.java))
+                    viewModel.clearEvent()
+                }
+                is MainViewModel.MainEvent.NavigateToAccessibility -> {
+                    startActivity(Intent(this, Accesibilidad::class.java))
+                    viewModel.clearEvent()
+                }
+                is MainViewModel.MainEvent.NavigateToCredits -> {
+                    startActivity(Intent(this, Creditos::class.java))
+                    viewModel.clearEvent()
+                }
+                is MainViewModel.MainEvent.NavigateToTutorial -> {
+                    startActivity(Intent(this, TutorialActivity::class.java))
+                    viewModel.clearEvent()
+                }
+                is MainViewModel.MainEvent.ExitApp -> {
+                    finishAffinity()
+                }
+                null -> { /* No action */ }
+            }
+        }
+
+        // Observar si debe mostrar tutorial
+        viewModel.shouldShowTutorial.observe(this) { shouldShow ->
+            if (shouldShow) {
+                viewModel.navigateToTutorial()
+            }
+        }
     }
     
     private fun aplicarConfiguracionAccesibilidad() {
@@ -80,40 +104,28 @@ class MainActivity : AccessibilityActivity() {
             errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
             errorMessage = "Error al aplicar configuración de accesibilidad"
         ) {
-            // Aplicar colores de accesibilidad
             AccesibilityHelper.applyAccessibilityColorsToApp(this)
         }
     }
-    
-    private fun verificarPrimeraVez() {
-        // Verificar si el usuario ha marcado la opción de no mostrar más el tutorial
-        val noMostrarTutorial = sharedPreferences.getBoolean("no_mostrar_tutorial", false)
-        
-        // Si el usuario no ha marcado la opción de no mostrar más el tutorial, mostrarlo
-        if (!noMostrarTutorial) {
-            val intent = Intent(this, TutorialActivity::class.java)
-            startActivity(intent)
-        }
-    }
 
-    //funcionamiento de llamado de ventanas de la App
-    // Intent para iniciar la actividad y pasar a la siguiente ventana
+    // Funciones legacy mantenidas por compatibilidad con XML onClick
+    @Suppress("UNUSED_PARAMETER")
     fun btnIniciar(view: View) {
-        val op = Intent(this, RegionMenu::class.java)
-        startActivity(op)
+        viewModel.navigateToRegionMenu()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun btnAccesibilidad(view: View) {
-        val op = Intent(this, Accesibilidad::class.java)
-        startActivity(op)
+        viewModel.navigateToAccessibility()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun btnCreditos(view: View) {
-        val op = Intent(this, Creditos::class.java)
-        startActivity(op)
+        viewModel.navigateToCredits()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun btnSalir(view: View) {
-        finishAffinity()
+        viewModel.exitApp()
     }
 }

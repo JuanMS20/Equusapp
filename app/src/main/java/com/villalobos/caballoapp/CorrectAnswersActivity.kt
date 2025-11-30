@@ -1,16 +1,25 @@
 package com.villalobos.caballoapp
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import com.villalobos.caballoapp.databinding.ActivityCorrectAnswersBinding
+import com.villalobos.caballoapp.ui.quiz.CorrectAnswersViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Activity para mostrar las respuestas correctas del quiz.
+ * Implementa MVVM delegando la lógica al CorrectAnswersViewModel.
+ */
+@AndroidEntryPoint
 class CorrectAnswersActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCorrectAnswersBinding
+    private val viewModel: CorrectAnswersViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,14 +28,8 @@ class CorrectAnswersActivity : AppCompatActivity() {
             binding = ActivityCorrectAnswersBinding.inflate(layoutInflater)
             setContentView(binding.root)
 
-            // Obtener el ID de la región
-            val regionId = intent.getIntExtra("REGION_ID", 1)
-            
-            // Configurar título según la región
-            setupTitle(regionId)
-            
-            // Mostrar respuestas correctas
-            showCorrectAnswers(regionId)
+            // Observar el estado del ViewModel
+            observeViewModel()
             
             // Configurar botón de volver
             setupBackButton()
@@ -51,45 +54,43 @@ class CorrectAnswersActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupTitle(regionId: Int) {
-        val regionName = DatosMusculares.obtenerRegionPorId(regionId)?.nombreCompleto ?: "Anatomía General"
-        binding.tvTitle.text = "Respuestas Correctas - $regionName"
-        
-        // Log para depuración
-        android.util.Log.d("CorrectAnswersActivity", "Configurando título para región ID: $regionId, Nombre: $regionName")
+    private fun observeViewModel() {
+        viewModel.state.observe(this) { state ->
+            // Actualizar título
+            binding.tvTitle.text = "Respuestas Correctas - ${state.regionName}"
+            
+            // Mostrar respuestas
+            showCorrectAnswers(state)
+        }
     }
 
-    private fun showCorrectAnswers(regionId: Int) {
+    private fun showCorrectAnswers(state: CorrectAnswersViewModel.CorrectAnswersState) {
         // Log para depuración
-        android.util.Log.d("CorrectAnswersActivity", "Mostrando respuestas para región ID: $regionId")
-        
-        // Obtener todas las preguntas para esta región
-        val questions = QuizData.getQuestionsByRegion(regionId)
-        
-        // Log para depuración
-        android.util.Log.d("CorrectAnswersActivity", "Número de preguntas encontradas: ${questions.size}")
+        android.util.Log.d("CorrectAnswersActivity", "Mostrando respuestas para región ID: ${state.regionId}")
+        android.util.Log.d("CorrectAnswersActivity", "Número de preguntas encontradas: ${state.questions.size}")
         
         // Limpiar contenedor
         binding.answersContainer.removeAllViews()
         
-        // Agregar cada pregunta con su respuesta correcta
-        questions.forEachIndexed { index, question ->
-            val questionCard = createQuestionCard(question, index + 1)
-            binding.answersContainer.addView(questionCard)
-        }
-        
-        // Mostrar un mensaje si no hay preguntas
-        if (questions.isEmpty()) {
+        if (state.hasQuestions) {
+            // Agregar cada pregunta con su respuesta correcta
+            state.questions.forEachIndexed { index, question ->
+                val correctAnswer = viewModel.getCorrectAnswerText(question)
+                val questionCard = createQuestionCard(question.question, correctAnswer, index + 1)
+                binding.answersContainer.addView(questionCard)
+            }
+        } else {
+            // Mostrar un mensaje si no hay preguntas
             val noQuestionsText = TextView(this)
             noQuestionsText.text = "No hay preguntas disponibles para esta región"
             noQuestionsText.textSize = 16f
-            noQuestionsText.setTextColor(resources.getColor(R.color.text_primary, theme))
+            noQuestionsText.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
             noQuestionsText.setPadding(16, 16, 16, 16)
             binding.answersContainer.addView(noQuestionsText)
         }
     }
 
-    private fun createQuestionCard(question: QuizQuestion, questionNumber: Int): CardView {
+    private fun createQuestionCard(questionText: String, correctAnswer: String, questionNumber: Int): CardView {
         val cardView = CardView(this)
         val layoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.MATCH_PARENT,
@@ -102,7 +103,7 @@ class CorrectAnswersActivity : AppCompatActivity() {
         cardView.cardElevation = 4f
         cardView.radius = 12f
         cardView.setContentPadding(24, 24, 24, 24)
-        cardView.setCardBackgroundColor(resources.getColor(R.color.warm_cream, theme))
+        cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.warm_cream))
         
         // Crear contenido del card
         val linearLayout = androidx.appcompat.widget.LinearLayoutCompat(this)
@@ -112,26 +113,26 @@ class CorrectAnswersActivity : AppCompatActivity() {
         val questionNumberText = TextView(this)
         questionNumberText.text = "Pregunta $questionNumber"
         questionNumberText.textSize = 16f
-        questionNumberText.setTextColor(resources.getColor(R.color.primary_brown, theme))
+        questionNumberText.setTextColor(ContextCompat.getColor(this, R.color.primary_brown))
         questionNumberText.setTypeface(null, android.graphics.Typeface.BOLD)
         linearLayout.addView(questionNumberText)
         
         // TextView para la pregunta
-        val questionText = TextView(this)
-        questionText.text = question.question
-        questionText.textSize = 14f
-        questionText.setTextColor(resources.getColor(R.color.text_primary, theme))
-        questionText.setPadding(0, 8, 0, 8)
-        linearLayout.addView(questionText)
+        val questionTextView = TextView(this)
+        questionTextView.text = questionText
+        questionTextView.textSize = 14f
+        questionTextView.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
+        questionTextView.setPadding(0, 8, 0, 8)
+        linearLayout.addView(questionTextView)
         
         // TextView para la respuesta correcta
-        val correctAnswerText = TextView(this)
-        correctAnswerText.text = "Respuesta correcta: ${question.options[question.correctAnswer]}"
-        correctAnswerText.textSize = 14f
-        correctAnswerText.setTextColor(resources.getColor(R.color.correct_green, theme))
-        correctAnswerText.setTypeface(null, android.graphics.Typeface.BOLD)
-        correctAnswerText.setPadding(0, 8, 0, 0)
-        linearLayout.addView(correctAnswerText)
+        val correctAnswerTextView = TextView(this)
+        correctAnswerTextView.text = "Respuesta correcta: $correctAnswer"
+        correctAnswerTextView.textSize = 14f
+        correctAnswerTextView.setTextColor(ContextCompat.getColor(this, R.color.correct_green))
+        correctAnswerTextView.setTypeface(null, android.graphics.Typeface.BOLD)
+        correctAnswerTextView.setPadding(0, 8, 0, 0)
+        linearLayout.addView(correctAnswerTextView)
         
         cardView.addView(linearLayout)
         

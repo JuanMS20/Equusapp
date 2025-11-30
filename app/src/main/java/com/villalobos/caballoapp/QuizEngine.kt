@@ -239,7 +239,7 @@ class QuizEngine(private val context: Context) {
     }
 
     fun isQuizActive(): Boolean {
-        return currentSession != null && !currentSession!!.isCompleted
+        return currentSession?.isCompleted == false
     }
 
     fun abandonQuiz() {

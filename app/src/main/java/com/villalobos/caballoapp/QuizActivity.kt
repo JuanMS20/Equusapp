@@ -4,18 +4,31 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.widget.RadioGroup
-import com.google.android.material.radiobutton.MaterialRadioButton
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import com.villalobos.caballoapp.databinding.ActivityQuizBinding
+import com.villalobos.caballoapp.ui.quiz.QuizViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Activity del Quiz usando arquitectura MVVM con Hilt.
+ * Mantiene compatibilidad con QuizEngine para funcionalidad legada.
+ */
+@AndroidEntryPoint
 class QuizActivity : BaseNavigationActivity() {
 
     private lateinit var binding: ActivityQuizBinding
+    
+    // MVVM: ViewModel inyectado con Hilt
+    private val viewModel: QuizViewModel by viewModels()
+    
+    // Mantener QuizEngine para compatibilidad con CorrectAnswersActivity
     private lateinit var quizEngine: QuizEngine
+    
     private var regionId: Int? = null
     private var timeUpdateHandler: Handler? = null
+    private var timeUpdateRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +57,9 @@ class QuizActivity : BaseNavigationActivity() {
             
             // Aplicar colores de accesibilidad
             applyActivityAccessibilityColors()
+            
+            // Configurar handler para botón de retroceso
+            setupBackPressedHandler()
 
         } catch (e: Exception) {
             ErrorHandler.handleError(
@@ -283,8 +299,10 @@ class QuizActivity : BaseNavigationActivity() {
     }
 
     private fun startTimeUpdates() {
+        stopTimeUpdates() // Limpiar cualquier runnable anterior
+        
         timeUpdateHandler = Handler(Looper.getMainLooper())
-        val runnable = object : Runnable {
+        timeUpdateRunnable = object : Runnable {
             override fun run() {
                 if (quizEngine.isQuizActive()) {
                     val timeElapsed = quizEngine.getTimeElapsed()
@@ -293,11 +311,15 @@ class QuizActivity : BaseNavigationActivity() {
                 }
             }
         }
-        timeUpdateHandler?.post(runnable)
+        timeUpdateRunnable?.let { timeUpdateHandler?.post(it) }
     }
 
     private fun stopTimeUpdates() {
+        timeUpdateRunnable?.let { runnable ->
+            timeUpdateHandler?.removeCallbacks(runnable)
+        }
         timeUpdateHandler?.removeCallbacksAndMessages(null)
+        timeUpdateRunnable = null
         timeUpdateHandler = null
     }
 
@@ -308,25 +330,43 @@ class QuizActivity : BaseNavigationActivity() {
         return String.format("%02d:%02d", minutes, seconds)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onPause() {
+        super.onPause()
         stopTimeUpdates()
-        quizEngine.abandonQuiz()
     }
 
-    override fun onBackPressed() {
-        if (quizEngine.isQuizActive()) {
-            AlertDialog.Builder(this)
-                .setTitle("Abandonar Quiz")
-                .setMessage("¿Estás seguro de que quieres salir? Perderás el progreso actual.")
-                .setPositiveButton("Salir") { _, _ ->
-                    super.onBackPressed()
-                }
-                .setNegativeButton("Continuar", null)
-                .show()
-        } else {
-            super.onBackPressed()
+    override fun onResume() {
+        super.onResume()
+        if (::quizEngine.isInitialized && quizEngine.isQuizActive()) {
+            startTimeUpdates()
         }
+    }
+
+    override fun onDestroy() {
+        stopTimeUpdates()
+        if (::quizEngine.isInitialized) {
+            quizEngine.abandonQuiz()
+        }
+        super.onDestroy()
+    }
+
+    private fun setupBackPressedHandler() {
+        onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (quizEngine.isQuizActive()) {
+                    AlertDialog.Builder(this@QuizActivity)
+                        .setTitle("Abandonar Quiz")
+                        .setMessage("¿Estás seguro de que quieres salir? Perderás el progreso actual.")
+                        .setPositiveButton("Salir") { _, _ ->
+                            finish()
+                        }
+                        .setNegativeButton("Continuar", null)
+                        .show()
+                } else {
+                    finish()
+                }
+            }
+        })
     }
     
     override fun applyActivityAccessibilityColors() {

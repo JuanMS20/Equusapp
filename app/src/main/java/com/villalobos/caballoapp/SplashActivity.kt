@@ -1,16 +1,23 @@
 package com.villalobos.caballoapp
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.villalobos.caballoapp.databinding.ActivitySplashBinding
+import com.villalobos.caballoapp.ui.splash.SplashViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Splash Screen de la aplicación.
+ * Implementa MVVM delegando la lógica al SplashViewModel.
+ */
+@AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySplashBinding
-    private val splashTimeOut: Long = 5000 // 5 segundos
+    private val viewModel: SplashViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,10 +36,11 @@ class SplashActivity : AppCompatActivity() {
             // Configurar textos dinámicos
             setupTexts()
 
-            // Iniciar temporizador para transición
-            Handler(Looper.getMainLooper()).postDelayed({
-                navigateToMainActivity()
-            }, splashTimeOut)
+            // Observar eventos del ViewModel
+            observeViewModel()
+
+            // Iniciar temporizador via ViewModel
+            viewModel.startSplashTimer()
 
         } catch (e: Exception) {
             // En caso de error, ir directamente a MainActivity
@@ -44,6 +52,18 @@ class SplashActivity : AppCompatActivity() {
                 canRecover = true,
                 recoveryAction = { navigateToMainActivity() }
             )
+        }
+    }
+
+    private fun observeViewModel() {
+        viewModel.event.observe(this) { event ->
+            when (event) {
+                is SplashViewModel.SplashEvent.NavigateToMain -> {
+                    viewModel.clearEvent()
+                    navigateToMainActivity()
+                }
+                null -> { /* No event */ }
+            }
         }
     }
 
@@ -122,8 +142,17 @@ class SplashActivity : AppCompatActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
 
-            // Animación de transición suave
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            // Animación de transición suave (API moderna para Android 14+)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                overrideActivityTransition(
+                    OVERRIDE_TRANSITION_OPEN,
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            }
 
             finish() // Cerrar splash activity
 
@@ -136,12 +165,5 @@ class SplashActivity : AppCompatActivity() {
                 canRecover = false
             )
         }
-    }
-
-    override fun onBackPressed() {
-        // Prevenir que el usuario salga del splash con back button
-        // El splash debe completarse para continuar
-        // Llamar a super para cumplir con los requisitos de lint
-        super.onBackPressed()
     }
 }

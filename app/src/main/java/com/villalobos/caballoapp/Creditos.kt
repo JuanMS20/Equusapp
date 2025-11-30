@@ -1,15 +1,23 @@
 package com.villalobos.caballoapp
 
 import android.os.Bundle
-import android.widget.Button
+import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.villalobos.caballoapp.ui.credits.CreditsViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Activity para mostrar los créditos de la aplicación.
+ * Implementa MVVM delegando la lógica al CreditsViewModel.
+ */
+@AndroidEntryPoint
 class Creditos : BaseNavigationActivity() {
 
-    private lateinit var btnBackCreditos: Button
+    private lateinit var btnBackCreditos: ImageButton
+    private val viewModel: CreditsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,11 +27,14 @@ class Creditos : BaseNavigationActivity() {
         // Bind back button
         btnBackCreditos = findViewById(R.id.btnBackCreditos)
         btnBackCreditos.setOnClickListener {
-            finish()
+            viewModel.navigateBack()
         }
 
         // Configurar el botón de inicio
         setupHomeButton(findViewById(R.id.btnHome))
+        
+        // Observar eventos del ViewModel
+        observeViewModel()
         
         // Aplicar colores de accesibilidad
         applyActivityAccessibilityColors()
@@ -32,6 +43,18 @@ class Creditos : BaseNavigationActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+    }
+
+    private fun observeViewModel() {
+        viewModel.event.observe(this) { event ->
+            when (event) {
+                is CreditsViewModel.CreditsEvent.NavigateBack -> {
+                    viewModel.clearEvent()
+                    finish()
+                }
+                null -> { /* No event */ }
+            }
         }
     }
     

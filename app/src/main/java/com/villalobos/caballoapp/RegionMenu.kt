@@ -3,58 +3,95 @@ package com.villalobos.caballoapp
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.ImageButton
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
 import com.villalobos.caballoapp.databinding.ActivityRegionMenuBinding
+import com.villalobos.caballoapp.ui.menu.RegionMenuViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Activity del menú de regiones anatómicas.
+ * Usa arquitectura MVVM con Hilt para inyección de dependencias.
+ */
+@AndroidEntryPoint
 class RegionMenu : BaseNavigationActivity() {
 
-    lateinit var btnRegionCabeza: Button
-    lateinit var btnRegionCuello: Button
-    lateinit var btnRegionTronco: Button
-    lateinit var btnRegionToracica: Button
-    lateinit var btnRegionPelvica: Button
+    // MVVM: ViewModel inyectado con Hilt
+    private val viewModel: RegionMenuViewModel by viewModels()
+    
+    private lateinit var binding: ActivityRegionMenuBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val enlace = ActivityRegionMenuBinding.inflate(layoutInflater)
-
-        btnRegionCabeza = enlace.btnRegionCabeza
-        btnRegionCuello = enlace.btnRegionCuello
-        btnRegionTronco = enlace.btnRegionTronco
-        btnRegionToracica = enlace.btnRegionToracica
-        btnRegionPelvica = enlace.btnRegionPelvica
-
-        // Configurar listeners para cada región
-        btnRegionCabeza.setOnClickListener {
-            irARegion(TipoRegion.CABEZA.id)
-        }
         
-        btnRegionCuello.setOnClickListener {
-            irARegion(TipoRegion.CUELLO.id)
-        }
+        binding = ActivityRegionMenuBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        btnRegionTronco.setOnClickListener {
-            irARegion(TipoRegion.TRONCO.id)
-        }
-        
-        btnRegionToracica.setOnClickListener {
-            irARegion(TipoRegion.MIEMBROS_TORACICOS.id)
-        }
-
-        btnRegionPelvica.setOnClickListener {
-            irARegion(TipoRegion.MIEMBROS_PELVICOS.id)
-        }
-
-
-        setContentView(enlace.root)
+        setupUI()
+        observeViewModel()
         
         // Configurar el botón de inicio
-        setupHomeButton(enlace.btnHome)
+        setupHomeButton(binding.btnHome)
         
         // Aplicar colores de accesibilidad
         applyActivityAccessibilityColors()
+    }
+
+    private fun setupUI() {
+        // Configurar listeners usando el ViewModel
+        binding.btnRegionCabeza.setOnClickListener {
+            viewModel.navigateToCabeza()
+        }
+        
+        binding.btnRegionCuello.setOnClickListener {
+            viewModel.navigateToCuello()
+        }
+
+        binding.btnRegionTronco.setOnClickListener {
+            viewModel.navigateToTronco()
+        }
+        
+        binding.btnRegionToracica.setOnClickListener {
+            viewModel.navigateToToracica()
+        }
+
+        binding.btnRegionPelvica.setOnClickListener {
+            viewModel.navigateToPelvica()
+        }
+    }
+
+    private fun observeViewModel() {
+        // Observar eventos de navegación
+        viewModel.event.observe(this) { event ->
+            when (event) {
+                is RegionMenuViewModel.RegionMenuEvent.NavigateToRegion -> {
+                    navigateToRegion(event.regionId, event.tipoRegion)
+                    viewModel.clearEvent()
+                }
+                is RegionMenuViewModel.RegionMenuEvent.Error -> {
+                    ErrorHandler.handleError(
+                        context = this,
+                        throwable = Exception(event.message),
+                        errorType = ErrorHandler.ErrorType.NAVIGATION_ERROR,
+                        userMessage = event.message,
+                        canRecover = true
+                    )
+                    viewModel.clearEvent()
+                }
+                null -> { /* No action */ }
+            }
+        }
+    }
+
+    private fun navigateToRegion(regionId: Int, tipoRegion: TipoRegion) {
+        val intent = when (tipoRegion) {
+            TipoRegion.CABEZA -> Intent(this, RegionCabeza::class.java)
+            TipoRegion.CUELLO -> Intent(this, RegionCuello::class.java)
+            TipoRegion.TRONCO -> Intent(this, RegionTronco::class.java)
+            TipoRegion.MIEMBROS_TORACICOS -> Intent(this, RegionToracica::class.java)
+            TipoRegion.MIEMBROS_PELVICOS -> Intent(this, RegionPelvica::class.java)
+        }
+        intent.putExtra("REGION_ID", regionId)
+        startActivity(intent)
     }
     
     override fun applyActivityAccessibilityColors() {
@@ -63,45 +100,33 @@ class RegionMenu : BaseNavigationActivity() {
             errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
             errorMessage = "Error al aplicar colores de accesibilidad en RegionMenu"
         ) {
-            // Aplicar colores de accesibilidad a los elementos de la actividad
             AccesibilityHelper.applyAccessibilityColorsToApp(this)
         }
     }
 
-    // Función para ir a la región seleccionada
-    private fun irARegion(regionId: Int) {
-        val intent = when (regionId) {
-            1 -> Intent(this, RegionCabeza::class.java)
-            2 -> Intent(this, RegionCuello::class.java)
-            3 -> Intent(this, RegionTronco::class.java)
-            4 -> Intent(this, RegionToracica::class.java)
-            5 -> Intent(this, RegionPelvica::class.java)
-            else -> return
-        }
-        
-        // Pasar el ID de la región a la actividad
-        intent.putExtra("REGION_ID", regionId)
-        startActivity(intent)
-    }
-
-    // Funciones originales mantenidas por compatibilidad
+    // Funciones legacy mantenidas por compatibilidad con XML onClick
+    @Suppress("UNUSED_PARAMETER")
     fun btnRegionCabeza(view: View) {
-        irARegion(TipoRegion.CABEZA.id)
+        viewModel.navigateToCabeza()
     }
     
+    @Suppress("UNUSED_PARAMETER")
     fun btnRegionCuello(view: View) {
-        irARegion(TipoRegion.CUELLO.id)
+        viewModel.navigateToCuello()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun btnRegionTronco(view: View) {
-        irARegion(TipoRegion.TRONCO.id)
+        viewModel.navigateToTronco()
     }
     
+    @Suppress("UNUSED_PARAMETER")
     fun btnRegionToracica(view: View) {
-        irARegion(TipoRegion.MIEMBROS_TORACICOS.id)
+        viewModel.navigateToToracica()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun btnRegionPelvica(view: View) {
-        irARegion(TipoRegion.MIEMBROS_PELVICOS.id)
+        viewModel.navigateToPelvica()
     }
 }

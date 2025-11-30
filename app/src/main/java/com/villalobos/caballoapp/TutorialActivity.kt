@@ -1,23 +1,25 @@
 package com.villalobos.caballoapp
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.villalobos.caballoapp.databinding.ActivityTutorialBinding
+import com.villalobos.caballoapp.ui.tutorial.TutorialViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Activity para mostrar el tutorial de la aplicación.
+ * Implementa MVVM delegando la lógica al TutorialViewModel.
+ */
+@AndroidEntryPoint
 class TutorialActivity : BaseNavigationActivity() {
 
     private lateinit var enlace: ActivityTutorialBinding
     private lateinit var tutorialAdapter: TutorialAdapter
-    private lateinit var sharedPreferences: SharedPreferences
-    private var pasoActual = 0
+    private val viewModel: TutorialViewModel by viewModels()
 
     private lateinit var btnBackTutorial: Button
-    
-    // Preferencia para no mostrar más el tutorial
-    private val PREF_NO_MOSTRAR_TUTORIAL = "no_mostrar_tutorial"
     
     private val pasosTutorial = listOf(
         TutorialPaso(
@@ -79,8 +81,8 @@ class TutorialActivity : BaseNavigationActivity() {
             enlace = ActivityTutorialBinding.inflate(layoutInflater)
             setContentView(enlace.root)
 
-            // Inicializar SharedPreferences
-            sharedPreferences = getSharedPreferences("tutorial_prefs", MODE_PRIVATE)
+            // Inicializar ViewModel con el número de pasos
+            viewModel.initialize(pasosTutorial.size)
 
             // Configurar ViewPager2
             configurarViewPager()
@@ -88,14 +90,17 @@ class TutorialActivity : BaseNavigationActivity() {
             // Configurar botones
             configurarBotones()
             
-            // Configurar estado inicial
-            actualizarInterfaz()
+            // Observar estado del ViewModel
+            observeViewModel()
             
             // Configurar el botón de inicio
             setupHomeButton(enlace.btnHome)
             
             // Aplicar colores de accesibilidad
             applyActivityAccessibilityColors()
+            
+            // Configurar handler para botón de retroceso
+            setupBackPressedHandler()
             
         } catch (e: Exception) {
             ErrorHandler.handleError(
@@ -104,8 +109,31 @@ class TutorialActivity : BaseNavigationActivity() {
                 errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
                 userMessage = "Error al inicializar tutorial",
                 canRecover = true,
-                recoveryAction = { finalizarTutorial() }
+                recoveryAction = { viewModel.completeTutorial() }
             )
+        }
+    }
+
+    private fun observeViewModel() {
+        // Observar estado del tutorial
+        viewModel.state.observe(this) { state ->
+            actualizarInterfaz(state)
+        }
+
+        // Observar eventos
+        viewModel.event.observe(this) { event ->
+            when (event) {
+                is TutorialViewModel.TutorialEvent.CompleteTutorial,
+                is TutorialViewModel.TutorialEvent.SkipTutorial -> {
+                    viewModel.clearEvent()
+                    finish()
+                }
+                is TutorialViewModel.TutorialEvent.StepChanged -> {
+                    enlace.viewPagerTutorial.currentItem = event.step
+                    viewModel.clearEvent()
+                }
+                null -> { /* No event */ }
+            }
         }
     }
 
@@ -121,8 +149,7 @@ class TutorialActivity : BaseNavigationActivity() {
             // Configurar listener para cambios de página
             enlace.viewPagerTutorial.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
-                    pasoActual = position
-                    actualizarInterfaz()
+                    viewModel.goToStep(position)
                 }
             })
         }
@@ -142,44 +169,43 @@ class TutorialActivity : BaseNavigationActivity() {
 
             // Botón anterior
             enlace.btnAnterior.setOnClickListener {
-                if (pasoActual > 0) {
-                    enlace.viewPagerTutorial.currentItem = pasoActual - 1
-                }
+                viewModel.previousStep()
             }
 
             // Botón siguiente/finalizar
             enlace.btnSiguiente.setOnClickListener {
-                if (pasoActual < pasosTutorial.size - 1) {
-                    enlace.viewPagerTutorial.currentItem = pasoActual + 1
-                } else {
-                    finalizarTutorial()
-                }
+                viewModel.nextStep()
             }
 
             // Botón saltar
             enlace.btnSaltarTutorial.setOnClickListener {
-                finalizarTutorial()
+                viewModel.skipTutorial()
+            }
+
+            // Checkbox no mostrar más
+            enlace.cbNoMostrarMas.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.setNoMostrarAgain(isChecked)
             }
         }
     }
 
-    private fun actualizarInterfaz() {
+    private fun actualizarInterfaz(state: TutorialViewModel.TutorialState) {
         ErrorHandler.safeExecute(
             context = this,
             errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
             errorMessage = "Error al actualizar interfaz"
         ) {
             // Actualizar indicador de paso
-            enlace.tvPasoActual.text = "${pasoActual + 1}/${pasosTutorial.size}"
+            enlace.tvPasoActual.text = "${state.currentStep + 1}/${pasosTutorial.size}"
             
             // Actualizar barra de progreso
-            enlace.progressBarTutorial.progress = pasoActual + 1
+            enlace.progressBarTutorial.progress = state.currentStep + 1
             
             // Actualizar estado de botones
-            enlace.btnAnterior.isEnabled = pasoActual > 0
+            enlace.btnAnterior.isEnabled = viewModel.canGoPrevious()
             
             // Cambiar texto del botón siguiente en el último paso
-            if (pasoActual == pasosTutorial.size - 1) {
+            if (state.isLastStep) {
                 enlace.btnSiguiente.text = "¡Comenzar!"
             } else {
                 enlace.btnSiguiente.text = "Siguiente →"
@@ -187,32 +213,17 @@ class TutorialActivity : BaseNavigationActivity() {
         }
     }
 
-    private fun finalizarTutorial() {
-        ErrorHandler.safeExecute(
-            context = this,
-            errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
-            errorMessage = "Error al finalizar tutorial"
-        ) {
-            // Guardar la preferencia del usuario sobre no mostrar más el tutorial
-            val noMostrarMas = enlace.cbNoMostrarMas.isChecked
-            sharedPreferences.edit()
-                .putBoolean(PREF_NO_MOSTRAR_TUTORIAL, noMostrarMas)
-                .apply()
-            
-            // Cerrar actividad
-            finish()
-        }
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        // Permitir retroceder en el tutorial o salir
-        if (pasoActual > 0) {
-            enlace.viewPagerTutorial.currentItem = pasoActual - 1
-        } else {
-            finalizarTutorial()
-        }
-        super.onBackPressed()
+    private fun setupBackPressedHandler() {
+        onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Permitir retroceder en el tutorial o salir
+                if (viewModel.canGoPrevious()) {
+                    viewModel.previousStep()
+                } else {
+                    viewModel.completeTutorial()
+                }
+            }
+        })
     }
     
     override fun applyActivityAccessibilityColors() {

@@ -363,13 +363,13 @@ object DatosMusculares {
     }
     
     // Función para obtener todos los músculos
-    fun obtenerTodosLosMusulos(): List<Musculo> {
+    fun obtenerTodosLosMusculos(): List<Musculo> {
         return musculosCabeza + musculosCuello + musculosTronco + musculosToracicos + musculosPelvicos
     }
     
     // Función para obtener músculo por ID
     fun obtenerMusculoPorId(id: Int): Musculo? {
-        return obtenerTodosLosMusulos().find { it.id == id }
+        return obtenerTodosLosMusculos().find { it.id == id }
     }
     
     // Función para obtener región por ID
