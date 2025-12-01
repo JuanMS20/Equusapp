@@ -19,7 +19,7 @@ class CreditsViewModel @Inject constructor() : ViewModel() {
         val developerName: String = "David Villalobos",
         val universityName: String = "Universidad Santiago de Cali",
         val appVersion: String = "1.0.0",
-        val projectName: String = "CaballoApp - Anatomía Muscular Equina"
+        val projectName: String = "EquusApp - Anatomía Muscular Equina"
     )
 
     // ============ Eventos ============

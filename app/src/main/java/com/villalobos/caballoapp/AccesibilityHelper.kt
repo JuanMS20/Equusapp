@@ -15,6 +15,8 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import androidx.core.view.ViewCompat
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatRadioButton
+import com.villalobos.caballoapp.ui.main.MainActivity
+import com.villalobos.caballoapp.ui.region.Region
 
 // TAG para los logs
 private const val TAG = "AccesibilityHelper"
@@ -785,6 +787,24 @@ private fun reapplyButtonColorsOnNextLayout(context: Context, colorblindType: Co
      */
     private fun applyAccessibilityColorsToView(context: Context, view: View) {
         try {
+            val config = getAccessibilityConfig(context)
+            
+            // Si no hay daltonismo activo, NO modificar fondos ni estilos visuales
+            // Solo aplicar escala de texto si es necesario
+            if (config.colorblindType == ColorblindType.NONE) {
+                if (view is TextView) {
+                    applyTextScale(context, view)
+                }
+                
+                // Recursivamente verificar hijos para escala de texto
+                if (view is android.view.ViewGroup) {
+                    for (i in 0 until view.childCount) {
+                        applyAccessibilityColorsToView(context, view.getChildAt(i))
+                    }
+                }
+                return
+            }
+
             if (view is TextView) {
                 // Aplicar color de texto accesible
                 val textColor = getAccessibleColor(context, R.color.text_primary)
@@ -1254,6 +1274,11 @@ if (inDaltonismArea) {
      */
     fun applySpecificColorblindColors(context: Context, view: View, colorblindType: ColorblindType) {
         try {
+            // Si no hay daltonismo, NO aplicar cambios de color específicos
+            if (colorblindType == ColorblindType.NONE) {
+                return
+            }
+
             // No alterar el área del RadioGroup de daltonismo: mantener fondos blancos/transparentes
             if (view.id == R.id.rgModosDaltonismo && view is android.view.ViewGroup) {
                 view.setBackgroundColor(android.graphics.Color.TRANSPARENT)
@@ -1540,6 +1565,11 @@ if (inDaltonismArea) {
 // === Force button palette application helpers (appended) ===
 private fun forceApplyButtonPalette(context: Context, root: View, colorblindType: AccesibilityHelper.ColorblindType) {
     try {
+        // Si no hay daltonismo, NO forzar paleta de botones
+        if (colorblindType == AccesibilityHelper.ColorblindType.NONE) {
+            return
+        }
+
         when (root) {
             // IMPORTANT: handle radio buttons FIRST so they don't fall into the generic Button branch
             is com.google.android.material.radiobutton.MaterialRadioButton,

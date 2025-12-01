@@ -1,8 +1,8 @@
 package com.villalobos.caballoapp.data.repository
 
 import android.content.Context
-import com.villalobos.caballoapp.QuizData
-import com.villalobos.caballoapp.QuizQuestion
+import com.villalobos.caballoapp.data.QuizData
+import com.villalobos.caballoapp.data.model.QuizQuestion
 import com.villalobos.caballoapp.UserStats
 
 /**

@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.villalobos.caballoapp.DatosMusculares
-import com.villalobos.caballoapp.QuizData
-import com.villalobos.caballoapp.QuizQuestion
+import com.villalobos.caballoapp.data.QuizData
+import com.villalobos.caballoapp.data.model.QuizQuestion
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

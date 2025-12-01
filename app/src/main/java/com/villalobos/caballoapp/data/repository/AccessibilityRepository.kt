@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import com.villalobos.caballoapp.AccesibilityHelper
-import com.villalobos.caballoapp.MainActivity
+import com.villalobos.caballoapp.ui.main.MainActivity
 
 /**
  * Repository para manejar configuración de accesibilidad.

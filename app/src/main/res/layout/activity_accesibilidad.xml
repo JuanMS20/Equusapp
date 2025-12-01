@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Configuración de Accesibilidad"
-                android:textAppearance="@style/TextAppearance.CaballoApp.Headline2"
+                android:textAppearance="@style/TextAppearance.EquusApp.Headline2"
                 android:textColor="@color/white" />
 
             <TextView
@@ -44,7 +44,7 @@
                 android:layout_marginTop="@dimen/spacing_xs"
                 android:gravity="center"
                 android:text="Personaliza la experiencia visual"
-                android:textAppearance="@style/TextAppearance.CaballoApp.Body"
+                android:textAppearance="@style/TextAppearance.EquusApp.Body"
                 android:textColor="@color/white"
                 android:alpha="0.9" />
         </LinearLayout>
@@ -89,14 +89,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Adaptación para Daltonismo"
-                        android:textAppearance="@style/TextAppearance.CaballoApp.Headline4"
+                        android:textAppearance="@style/TextAppearance.EquusApp.Headline4"
                         android:layout_marginBottom="@dimen/spacing_sm" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Selecciona el modo de colores que mejor se adapte a tu visión:"
-                        android:textAppearance="@style/TextAppearance.CaballoApp.Body"
+                        android:textAppearance="@style/TextAppearance.EquusApp.Body"
                         android:layout_marginBottom="@dimen/spacing_md" />
 
                     <RadioGroup
@@ -113,7 +113,7 @@
                             android:minHeight="@dimen/button_height"
                             android:background="@drawable/radio_option_background"
                             android:text="Colores Estándar"
-                            android:textAppearance="@style/TextAppearance.CaballoApp.Label"
+                            android:textAppearance="@style/TextAppearance.EquusApp.Label"
                             app:useMaterialThemeColors="false"
                             app:buttonTint="@color/primary_brown" />
 
@@ -125,7 +125,7 @@
                             android:minHeight="@dimen/button_height"
                             android:background="@drawable/radio_option_background"
                             android:text="Protanopia (Dificultad con rojos)"
-                            android:textAppearance="@style/TextAppearance.CaballoApp.Body"
+                            android:textAppearance="@style/TextAppearance.EquusApp.Body"
                             app:useMaterialThemeColors="false"
                             app:buttonTint="@color/primary_brown" />
 
@@ -137,7 +137,7 @@
                             android:minHeight="@dimen/button_height"
                             android:background="@drawable/radio_option_background"
                             android:text="Deuteranopia (Dificultad con verdes)"
-                            android:textAppearance="@style/TextAppearance.CaballoApp.Body"
+                            android:textAppearance="@style/TextAppearance.EquusApp.Body"
                             app:useMaterialThemeColors="false"
                             app:buttonTint="@color/primary_brown" />
 
@@ -149,7 +149,7 @@
                             android:minHeight="@dimen/button_height"
                             android:background="@drawable/radio_option_background"
                             android:text="Tritanopia (Dificultad con azules/amarillos)"
-                            android:textAppearance="@style/TextAppearance.CaballoApp.Body"
+                            android:textAppearance="@style/TextAppearance.EquusApp.Body"
                             app:useMaterialThemeColors="false"
                             app:buttonTint="@color/primary_brown" />
 
@@ -161,7 +161,7 @@
                             android:minHeight="@dimen/button_height"
                             android:background="@drawable/radio_option_background"
                             android:text="Acromatopsia (Visión en escala de grises)"
-                            android:textAppearance="@style/TextAppearance.CaballoApp.Body"
+                            android:textAppearance="@style/TextAppearance.EquusApp.Body"
                             app:useMaterialThemeColors="false"
                             app:buttonTint="@color/primary_brown" />
                     </RadioGroup>
@@ -180,7 +180,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="@dimen/spacing_sm"
                             android:text="Vista previa:"
-                            android:textAppearance="@style/TextAppearance.CaballoApp.Caption" />
+                            android:textAppearance="@style/TextAppearance.EquusApp.Caption" />
 
                         <View
                             android:id="@+id/previewColor1"
@@ -214,7 +214,7 @@
                     <!-- Botón para desactivar daltonismo -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnDesactivarDaltonismo"
-                        style="@style/Widget.CaballoApp.Button.Outlined"
+                        style="@style/Widget.EquusApp.Button.Outlined"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/button_height_small"
                         android:layout_marginTop="@dimen/spacing_md"
@@ -246,18 +246,18 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/spacing_sm"
                         android:text="Tutorial de la Aplicación"
-                        android:textAppearance="@style/TextAppearance.CaballoApp.Headline4" />
+                        android:textAppearance="@style/TextAppearance.EquusApp.Headline4" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/spacing_md"
-                        android:text="Vuelve a ver el tutorial interactivo para familiarizarte con todas las funciones de CaballoApp."
-                        android:textAppearance="@style/TextAppearance.CaballoApp.Body" />
+                        android:text="Vuelve a ver el tutorial interactivo para familiarizarte con todas las funciones de EquusApp."
+                        android:textAppearance="@style/TextAppearance.EquusApp.Body" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnReiniciarTutorial"
-                        style="@style/Widget.CaballoApp.Button.Secondary"
+                        style="@style/Widget.EquusApp.Button.Secondary"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/button_height"
                         android:text="🎓  Reiniciar Tutorial"
@@ -273,7 +273,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnVolverAccesibilidad"
-                    style="@style/Widget.CaballoApp.Button.Outlined"
+                    style="@style/Widget.EquusApp.Button.Outlined"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/button_height"
                     android:layout_marginEnd="@dimen/spacing_sm"
@@ -283,7 +283,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnGuardarAccesibilidad"
-                    style="@style/Widget.CaballoApp.Button.Primary"
+                    style="@style/Widget.EquusApp.Button.Primary"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/button_height"
                     android:layout_marginStart="@dimen/spacing_sm"

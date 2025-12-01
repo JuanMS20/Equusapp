@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.villalobos.caballoapp.AchievementData
-import com.villalobos.caballoapp.QuizQuestion
+import com.villalobos.caballoapp.data.model.QuizQuestion
 import com.villalobos.caballoapp.UserStats
 import com.villalobos.caballoapp.data.repository.QuizRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

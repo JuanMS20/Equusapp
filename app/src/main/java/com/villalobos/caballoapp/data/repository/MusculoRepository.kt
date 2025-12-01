@@ -2,7 +2,7 @@ package com.villalobos.caballoapp.data.repository
 
 import com.villalobos.caballoapp.DatosMusculares
 import com.villalobos.caballoapp.Musculo
-import com.villalobos.caballoapp.Region
+import com.villalobos.caballoapp.ui.region.Region
 import javax.inject.Inject
 import javax.inject.Singleton
 

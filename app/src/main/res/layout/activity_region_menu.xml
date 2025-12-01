@@ -34,7 +34,7 @@
                 android:layout_marginEnd="@dimen/spacing_xs"
                 android:gravity="start"
                 android:text="Anatomía Muscular"
-                android:textAppearance="@style/TextAppearance.CaballoApp.Headline2"
+                android:textAppearance="@style/TextAppearance.EquusApp.Headline2"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toTopOf="@+id/tvSubtitleHeader"
                 app:layout_constraintEnd_toStartOf="@+id/btnHome"
@@ -48,7 +48,7 @@
                 android:layout_marginTop="@dimen/spacing_xxs"
                 android:gravity="start"
                 android:text="Caballo Criollo Colombiano"
-                android:textAppearance="@style/TextAppearance.CaballoApp.Body"
+                android:textAppearance="@style/TextAppearance.EquusApp.Body"
                 android:textColor="@color/white"
                 android:alpha="0.9"
                 app:layout_constraintEnd_toStartOf="@+id/btnHome"
@@ -107,7 +107,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_lg"
         android:text="Selecciona una región"
-        android:textAppearance="@style/TextAppearance.CaballoApp.Headline4"
+        android:textAppearance="@style/TextAppearance.EquusApp.Headline4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageCard" />
@@ -135,7 +135,7 @@
             <!-- Botón Región Cabeza -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRegionCabeza"
-                style="@style/Widget.CaballoApp.Button.Secondary"
+                style="@style/Widget.EquusApp.Button.Secondary"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height"
                 android:layout_marginBottom="@dimen/spacing_sm"
@@ -148,7 +148,7 @@
             <!-- Botón Región Cuello -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRegionCuello"
-                style="@style/Widget.CaballoApp.Button.Secondary"
+                style="@style/Widget.EquusApp.Button.Secondary"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height"
                 android:layout_marginBottom="@dimen/spacing_sm"
@@ -161,7 +161,7 @@
             <!-- Botón Región Tronco -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRegionTronco"
-                style="@style/Widget.CaballoApp.Button.Secondary"
+                style="@style/Widget.EquusApp.Button.Secondary"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height"
                 android:layout_marginBottom="@dimen/spacing_sm"
@@ -174,7 +174,7 @@
             <!-- Botón Región Torácica -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRegionToracica"
-                style="@style/Widget.CaballoApp.Button.Secondary"
+                style="@style/Widget.EquusApp.Button.Secondary"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height"
                 android:layout_marginBottom="@dimen/spacing_sm"
@@ -187,7 +187,7 @@
             <!-- Botón Región Pélvica -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRegionPelvica"
-                style="@style/Widget.CaballoApp.Button.Secondary"
+                style="@style/Widget.EquusApp.Button.Secondary"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height"
                 android:text="Región Pélvica"

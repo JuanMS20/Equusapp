@@ -1,5 +1,7 @@
 package com.villalobos.caballoapp
 
+import com.villalobos.caballoapp.ui.region.Region
+
 object DatosMusculares {
     
     // Regiones disponibles

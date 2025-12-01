@@ -6,6 +6,9 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.villalobos.caballoapp.ui.main.MainActivity
+import com.villalobos.caballoapp.ui.region.Region
+import com.villalobos.caballoapp.ui.region.RegionMenu
 
 /**
  * Clase centralizada para manejo de errores y recuperación automática
@@ -13,7 +16,7 @@ import androidx.appcompat.app.AlertDialog
  */
 object ErrorHandler {
     
-    public const val TAG = "CaballoApp_ErrorHandler"
+    public const val TAG = "EquusApp_ErrorHandler"
     
     /**
      * Niveles de severidad de errores

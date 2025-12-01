@@ -5,52 +5,48 @@
     <!-- ============================================== -->
     
     <!-- Estilo base para TextAppearance -->
-    <style name="TextAppearance.CaballoApp" parent="TextAppearance.Material3.BodyLarge" />
+    <style name="TextAppearance.EquusApp" parent="TextAppearance.Material3.BodyLarge" />
     
     <!-- Estilo base para Widget -->
-    <style name="Widget.CaballoApp" parent="@android:style/Widget" />
+    <style name="Widget.EquusApp" parent="@android:style/Widget" />
     
     <!-- ============================================== -->
     <!-- ESTILOS DE TEXTO - JERARQUÍA TIPOGRÁFICA      -->
     <!-- ============================================== -->
     
     <!-- Título Principal (H1) -->
-    <style name="TextAppearance.CaballoApp.Headline1" parent="TextAppearance.CaballoApp">
+    <style name="TextAppearance.EquusApp.Headline1" parent="TextAppearance.EquusApp">
         <item name="android:textSize">@dimen/text_size_h1</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/text_primary</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:letterSpacing">-0.02</item>
         <item name="android:lineSpacingMultiplier">1.2</item>
     </style>
     
     <!-- Título Secundario (H2) -->
-    <style name="TextAppearance.CaballoApp.Headline2">
+    <style name="TextAppearance.EquusApp.Headline2">
         <item name="android:textSize">@dimen/text_size_h2</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/text_primary</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:letterSpacing">-0.01</item>
     </style>
     
     <!-- Título de Sección (H3) -->
-    <style name="TextAppearance.CaballoApp.Headline3">
+    <style name="TextAppearance.EquusApp.Headline3">
         <item name="android:textSize">@dimen/text_size_h3</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/text_primary</item>
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
     
     <!-- Subtítulo (H4) -->
-    <style name="TextAppearance.CaballoApp.Headline4">
+    <style name="TextAppearance.EquusApp.Headline4">
         <item name="android:textSize">@dimen/text_size_h4</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@color/text_primary</item>
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
     
     <!-- Cuerpo Grande -->
-    <style name="TextAppearance.CaballoApp.BodyLarge">
+    <style name="TextAppearance.EquusApp.BodyLarge">
         <item name="android:textSize">@dimen/text_size_body_large</item>
         <item name="android:textColor">@color/text_secondary</item>
         <item name="android:fontFamily">sans-serif</item>
@@ -58,22 +54,21 @@
     </style>
     
     <!-- Cuerpo Normal -->
-    <style name="TextAppearance.CaballoApp.Body">
+    <style name="TextAppearance.EquusApp.Body">
         <item name="android:textSize">@dimen/text_size_body</item>
-        <item name="android:textColor">@color/text_secondary</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:lineSpacingMultiplier">1.4</item>
     </style>
     
     <!-- Cuerpo Pequeño -->
-    <style name="TextAppearance.CaballoApp.BodySmall">
+    <style name="TextAppearance.EquusApp.BodySmall">
         <item name="android:textSize">@dimen/text_size_body_small</item>
         <item name="android:textColor">@color/text_tertiary</item>
         <item name="android:fontFamily">sans-serif</item>
     </style>
     
     <!-- Etiqueta -->
-    <style name="TextAppearance.CaballoApp.Label">
+    <style name="TextAppearance.EquusApp.Label">
         <item name="android:textSize">@dimen/text_size_label</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/text_primary</item>
@@ -82,7 +77,7 @@
     </style>
     
     <!-- Caption -->
-    <style name="TextAppearance.CaballoApp.Caption">
+    <style name="TextAppearance.EquusApp.Caption">
         <item name="android:textSize">@dimen/text_size_caption</item>
         <item name="android:textColor">@color/text_tertiary</item>
         <item name="android:fontFamily">sans-serif</item>
@@ -93,7 +88,7 @@
     <!-- ============================================== -->
     
     <!-- Botón Principal (Filled) - Estilo Pill -->
-    <style name="Widget.CaballoApp.Button.Primary" parent="Widget.Material3.Button">
+    <style name="Widget.EquusApp.Button.Primary" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/primary_brown</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/text_size_label</item>
@@ -111,7 +106,7 @@
     </style>
     
     <!-- Botón Secundario (Tonal) -->
-    <style name="Widget.CaballoApp.Button.Secondary" parent="Widget.Material3.Button.TonalButton">
+    <style name="Widget.EquusApp.Button.Secondary" parent="Widget.Material3.Button.TonalButton">
         <item name="backgroundTint">@color/warm_cream</item>
         <item name="android:textColor">@color/primary_brown</item>
         <item name="android:textSize">@dimen/text_size_label</item>
@@ -126,7 +121,7 @@
     </style>
     
     <!-- Botón Outlined -->
-    <style name="Widget.CaballoApp.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+    <style name="Widget.EquusApp.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
         <item name="strokeColor">@color/primary_brown</item>
         <item name="strokeWidth">2dp</item>
         <item name="android:textColor">@color/primary_brown</item>
@@ -141,7 +136,7 @@
     </style>
     
     <!-- Botón de Texto -->
-    <style name="Widget.CaballoApp.Button.Text" parent="Widget.Material3.Button.TextButton">
+    <style name="Widget.EquusApp.Button.Text" parent="Widget.Material3.Button.TextButton">
         <item name="android:textColor">@color/primary_brown</item>
         <item name="android:textSize">@dimen/text_size_label</item>
         <item name="android:textStyle">bold</item>
@@ -151,7 +146,7 @@
     </style>
     
     <!-- Botón de Navegación (Atrás/Home) -->
-    <style name="Widget.CaballoApp.Button.Navigation" parent="Widget.Material3.Button.IconButton">
+    <style name="Widget.EquusApp.Button.Navigation" parent="Widget.Material3.Button.IconButton">
         <item name="android:background">@drawable/bg_button_navigation</item>
         <item name="tint">@color/primary_brown</item>
         <item name="android:minWidth">@dimen/nav_button_size</item>
@@ -159,7 +154,7 @@
     </style>
     
     <!-- Botón de Región (Menu) -->
-    <style name="Widget.CaballoApp.Button.Region" parent="Widget.Material3.Button">
+    <style name="Widget.EquusApp.Button.Region" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/warm_cream</item>
         <item name="android:textColor">@color/primary_brown</item>
         <item name="android:textSize">@dimen/text_size_body_large</item>
@@ -177,7 +172,7 @@
     </style>
     
     <!-- Botón de Salir -->
-    <style name="Widget.CaballoApp.Button.Exit" parent="Widget.Material3.Button.OutlinedButton">
+    <style name="Widget.EquusApp.Button.Exit" parent="Widget.Material3.Button.OutlinedButton">
         <item name="strokeColor">@color/error_red</item>
         <item name="strokeWidth">2dp</item>
         <item name="android:textColor">@color/error_red</item>
@@ -194,7 +189,7 @@
     <!-- ============================================== -->
     
     <!-- Card Elevada -->
-    <style name="Widget.CaballoApp.Card.Elevated" parent="Widget.Material3.CardView.Elevated">
+    <style name="Widget.EquusApp.Card.Elevated" parent="Widget.Material3.CardView.Elevated">
         <item name="cardBackgroundColor">@color/white</item>
         <item name="cardCornerRadius">@dimen/card_corner_radius</item>
         <item name="cardElevation">@dimen/card_elevation</item>
@@ -202,7 +197,7 @@
     </style>
     
     <!-- Card Outlined -->
-    <style name="Widget.CaballoApp.Card.Outlined" parent="Widget.Material3.CardView.Outlined">
+    <style name="Widget.EquusApp.Card.Outlined" parent="Widget.Material3.CardView.Outlined">
         <item name="cardBackgroundColor">@color/white</item>
         <item name="cardCornerRadius">@dimen/card_corner_radius</item>
         <item name="strokeColor">@color/border_light</item>
@@ -211,7 +206,7 @@
     </style>
     
     <!-- Card de Header -->
-    <style name="Widget.CaballoApp.Card.Header" parent="Widget.Material3.CardView.Elevated">
+    <style name="Widget.EquusApp.Card.Header" parent="Widget.Material3.CardView.Elevated">
         <item name="cardBackgroundColor">@color/warm_cream</item>
         <item name="cardCornerRadius">@dimen/card_corner_radius_large</item>
         <item name="cardElevation">@dimen/card_elevation_raised</item>
@@ -219,7 +214,7 @@
     </style>
     
     <!-- Card de Contenido (Quiz, Músculo) -->
-    <style name="Widget.CaballoApp.Card.Content" parent="Widget.Material3.CardView.Filled">
+    <style name="Widget.EquusApp.Card.Content" parent="Widget.Material3.CardView.Filled">
         <item name="cardBackgroundColor">@color/surface_variant</item>
         <item name="cardCornerRadius">@dimen/card_corner_radius</item>
         <item name="cardElevation">0dp</item>
@@ -227,7 +222,7 @@
     </style>
     
     <!-- Card Interactiva (clicable) -->
-    <style name="Widget.CaballoApp.Card.Interactive" parent="Widget.Material3.CardView.Elevated">
+    <style name="Widget.EquusApp.Card.Interactive" parent="Widget.Material3.CardView.Elevated">
         <item name="cardBackgroundColor">@color/white</item>
         <item name="cardCornerRadius">@dimen/card_corner_radius</item>
         <item name="cardElevation">@dimen/card_elevation</item>
@@ -241,7 +236,7 @@
     <!-- CHIPS                                          -->
     <!-- ============================================== -->
     
-    <style name="Widget.CaballoApp.Chip" parent="Widget.Material3.Chip.Filter">
+    <style name="Widget.EquusApp.Chip" parent="Widget.Material3.Chip.Filter">
         <item name="chipBackgroundColor">@color/chip_background_selector</item>
         <item name="chipCornerRadius">20dp</item>
         <item name="android:textColor">@color/chip_text_selector</item>
@@ -253,7 +248,7 @@
     <!-- INPUTS                                         -->
     <!-- ============================================== -->
     
-    <style name="Widget.CaballoApp.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+    <style name="Widget.EquusApp.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
         <item name="boxCornerRadiusTopStart">@dimen/card_corner_radius</item>
         <item name="boxCornerRadiusTopEnd">@dimen/card_corner_radius</item>
         <item name="boxCornerRadiusBottomStart">@dimen/card_corner_radius</item>
@@ -266,7 +261,7 @@
     <!-- DIVIDERS                                       -->
     <!-- ============================================== -->
     
-    <style name="Widget.CaballoApp.Divider">
+    <style name="Widget.EquusApp.Divider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/divider_height</item>
         <item name="android:background">@color/divider</item>

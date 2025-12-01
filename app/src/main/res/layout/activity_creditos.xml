@@ -49,7 +49,7 @@
                 android:layout_marginEnd="@dimen/spacing_sm"
                 android:gravity="center"
                 android:text="CRÉDITOS"
-                android:textAppearance="@style/TextAppearance.CaballoApp.Headline2"
+                android:textAppearance="@style/TextAppearance.EquusApp.Headline2"
                 android:textColor="@color/text_on_dark"
                 android:padding="@dimen/spacing_md"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -109,8 +109,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="CaballoApp"
-                        android:textAppearance="@style/TextAppearance.CaballoApp.Headline1"
+                        android:text="EquusApp"
+                        android:textAppearance="@style/TextAppearance.EquusApp.Headline1"
                         android:textColor="@color/primary_brown"
                         android:gravity="center"
                         android:layout_marginBottom="@dimen/spacing_sm" />
@@ -119,7 +119,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Aplicación educativa para el estudio de la miología del Caballo Criollo Colombiano"
-                        android:textAppearance="@style/TextAppearance.CaballoApp.Body"
+                        android:textAppearance="@style/TextAppearance.EquusApp.Body"
                         android:textColor="@color/text_secondary"
                         android:gravity="center"
                         android:layout_marginBottom="@dimen/spacing_xl" />
@@ -136,7 +136,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Desarrollado por:"
-                        android:textAppearance="@style/TextAppearance.CaballoApp.Headline4"
+                        android:textAppearance="@style/TextAppearance.EquusApp.Headline4"
                         android:textColor="@color/primary_brown"
                         android:layout_marginBottom="@dimen/spacing_md" />
 
@@ -144,7 +144,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Universidad Santiago de Cali\nFacultad de Ingeniería de Sistemas\nProyecto de Investigación"
-                        android:textAppearance="@style/TextAppearance.CaballoApp.Body"
+                        android:textAppearance="@style/TextAppearance.EquusApp.Body"
                         android:textColor="@color/text_secondary"
                         android:gravity="center"
                         android:lineSpacingMultiplier="1.5"
@@ -162,7 +162,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Versión 1.0"
-                        android:textAppearance="@style/TextAppearance.CaballoApp.Caption"
+                        android:textAppearance="@style/TextAppearance.EquusApp.Caption"
                         android:textColor="@color/text_tertiary"
                         android:gravity="center" />
 
