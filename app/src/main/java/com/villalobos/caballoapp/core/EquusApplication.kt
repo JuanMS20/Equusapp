@@ -1,4 +1,4 @@
-package com.villalobos.caballoapp.nucleo
+package com.villalobos.caballoapp.core
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

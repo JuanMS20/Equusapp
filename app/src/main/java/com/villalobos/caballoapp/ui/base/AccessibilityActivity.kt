@@ -2,7 +2,6 @@ package com.villalobos.caballoapp.ui.base
 
 import android.os.Bundle
 import com.villalobos.caballoapp.util.AccesibilityHelper
-import com.villalobos.caballoapp.util.ErrorHandler
 
 /**
  * Clase base para actividades que aplican automáticamente la configuración de accesibilidad
@@ -10,47 +9,44 @@ import com.villalobos.caballoapp.util.ErrorHandler
  */
 abstract class AccessibilityActivity : BaseNavigationActivity() {
     
+    private var hasAppliedAccessibility = false
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        // Aplicar configuración de accesibilidad al crear la actividad
-        applyAccessibilityOnStart()
+        // Solo aplicar fondo en onCreate, el resto se hace en onResume
     }
     
     override fun onResume() {
         super.onResume()
         
-        // Re-aplicar configuración al reanudar la actividad (por si cambió en otra actividad)
-        applyAccessibilityOnResume()
-    }
-    
-    /**
-     * Aplica la configuración de accesibilidad al iniciar la actividad
-     */
-    private fun applyAccessibilityOnStart() {
-        ErrorHandler.safeExecute(
-            context = this,
-            errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
-            errorMessage = "Error al aplicar configuración de accesibilidad al iniciar"
-        ) {
-            AccesibilityHelper.applyAccessibilityColorsToApp(this)
-            // Aplicar colores específicos de la actividad
-            applyActivityAccessibilityColors()
+        // Aplicar accesibilidad solo una vez o si cambió la configuración
+        if (!hasAppliedAccessibility) {
+            applyAccessibilityLightweight()
+            hasAppliedAccessibility = true
         }
     }
     
     /**
-     * Aplica la configuración de accesibilidad al reanudar la actividad
+     * Aplica la configuración de accesibilidad de forma ligera (solo fondo)
      */
-    private fun applyAccessibilityOnResume() {
-        ErrorHandler.safeExecute(
-            context = this,
-            errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
-            errorMessage = "Error al aplicar configuración de accesibilidad al reanudar"
-        ) {
-            AccesibilityHelper.applyAccessibilityColorsToApp(this)
-            // Aplicar colores específicos de la actividad
+    private fun applyAccessibilityLightweight() {
+        try {
+            val config = AccesibilityHelper.getAccessibilityConfig(this)
+            // Solo aplicar el fondo, no recorrer todo el árbol de vistas
+            AccesibilityHelper.applyBackgroundGradient(this, window.decorView, config.colorblindType)
+            // Permitir a subclases aplicar colores específicos
             applyActivityAccessibilityColors()
+        } catch (e: Exception) {
+            // Ignorar errores silenciosamente
         }
+    }
+    
+    /**
+     * Fuerza re-aplicación de accesibilidad (llamar cuando cambie la configuración)
+     */
+    fun forceReapplyAccessibility() {
+        hasAppliedAccessibility = false
+        applyAccessibilityLightweight()
+        hasAppliedAccessibility = true
     }
 }

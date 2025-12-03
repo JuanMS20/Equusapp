@@ -3,12 +3,8 @@ package com.villalobos.caballoapp.ui.main
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import androidx.activity.viewModels
-import com.villalobos.caballoapp.R
 import com.villalobos.caballoapp.ui.base.AccessibilityActivity
-import com.villalobos.caballoapp.util.AccesibilityHelper
-import com.villalobos.caballoapp.util.ErrorHandler
 import com.villalobos.caballoapp.ui.accessibility.Accesibilidad
 import com.villalobos.caballoapp.ui.credits.Creditos
 import com.villalobos.caballoapp.ui.region.RegionMenu
@@ -29,15 +25,7 @@ class MainActivity : AccessibilityActivity() {
     private lateinit var binding: ActivityMainBinding
     
     override fun applyActivityAccessibilityColors() {
-        ErrorHandler.safeExecute(
-            context = this,
-            errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
-            errorMessage = "Error al aplicar colores de accesibilidad específicos de la actividad"
-        ) {
-            val config = AccesibilityHelper.getAccessibilityConfig(this)
-            AccesibilityHelper.applySpecificColorblindColors(this, window.decorView, config.colorblindType)
-            AccesibilityHelper.applyBackgroundGradient(this, window.decorView, config.colorblindType)
-        }
+        // No hacer nada pesado aquí - el fondo ya se aplica en AccessibilityActivity
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +36,6 @@ class MainActivity : AccessibilityActivity() {
 
         setupUI()
         observeViewModel()
-        aplicarConfiguracionAccesibilidad()
     }
 
     private fun setupUI() {
@@ -98,20 +85,10 @@ class MainActivity : AccessibilityActivity() {
         }
 
         // Observar si debe mostrar tutorial
-        viewModel.shouldShowTutorial.observe(this) { shouldShow ->
+            viewModel.shouldShowTutorial.observe(this) { shouldShow ->
             if (shouldShow) {
                 viewModel.navigateToTutorial()
             }
-        }
-    }
-    
-    private fun aplicarConfiguracionAccesibilidad() {
-        ErrorHandler.safeExecute(
-            context = this,
-            errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
-            errorMessage = "Error al aplicar configuración de accesibilidad"
-        ) {
-            AccesibilityHelper.applyAccessibilityColorsToApp(this)
         }
     }
 
