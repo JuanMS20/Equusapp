@@ -26,6 +26,10 @@ abstract class AccessibilityActivity : BaseNavigationActivity() {
         }
     }
     
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+    
     /**
      * Aplica la configuración de accesibilidad de forma ligera (solo fondo)
      */

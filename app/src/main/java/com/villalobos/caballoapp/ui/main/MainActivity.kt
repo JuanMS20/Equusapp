@@ -9,6 +9,8 @@ import com.villalobos.caballoapp.ui.accessibility.Accesibilidad
 import com.villalobos.caballoapp.ui.credits.Creditos
 import com.villalobos.caballoapp.ui.region.RegionMenu
 import com.villalobos.caballoapp.ui.tutorial.TutorialActivity
+import com.villalobos.caballoapp.ui.achievements.AchievementsActivity
+import com.villalobos.caballoapp.ui.gamification.GamificationActivity
 import com.villalobos.caballoapp.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -55,6 +57,10 @@ class MainActivity : AccessibilityActivity() {
         binding.btnSalir.setOnClickListener {
             viewModel.exitApp()
         }
+
+        binding.statsCard.setOnClickListener {
+            startActivity(Intent(this, GamificationActivity::class.java))
+        }
     }
 
     private fun observeViewModel() {
@@ -85,11 +91,24 @@ class MainActivity : AccessibilityActivity() {
         }
 
         // Observar si debe mostrar tutorial
-            viewModel.shouldShowTutorial.observe(this) { shouldShow ->
+        viewModel.shouldShowTutorial.observe(this) { shouldShow ->
             if (shouldShow) {
                 viewModel.navigateToTutorial()
             }
         }
+
+        // Observar estadísticas del usuario
+        viewModel.userStats.observe(this) { stats ->
+            binding.tvLevel.text = stats.level.toString()
+            binding.tvXp.text = stats.totalXp.toString()
+            binding.tvStreak.text = "${stats.studyStreak} días"
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Recargar estadísticas al volver (por si completó un quiz)
+        viewModel.loadUserStats()
     }
 
     // Funciones legacy mantenidas por compatibilidad con XML onClick

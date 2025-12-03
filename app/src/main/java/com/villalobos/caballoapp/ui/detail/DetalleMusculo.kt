@@ -121,6 +121,15 @@ class DetalleMusculo : BaseNavigationActivity() {
                     )
                     viewModel.clearEvent()
                 }
+                is DetalleMusculoViewModel.DetalleEvent.XPEarned -> {
+                    // Mostrar notificación de XP ganada por estudiar nuevo músculo
+                    android.widget.Toast.makeText(
+                        this,
+                        "¡+${event.amount} XP por estudiar ${event.muscleName}!",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                    viewModel.clearEvent()
+                }
                 null -> { /* No action */ }
             }
         }

@@ -19,6 +19,10 @@ class QuizRepository(private val context: Context) {
         private const val KEY_PERFECT_QUIZZES = "perfect_quizzes"
         private const val KEY_FASTEST_TIME = "fastest_quiz_time"
         private const val KEY_REGION_SCORE_PREFIX = "region_score_"
+        private const val KEY_TOTAL_XP = "total_xp"
+        private const val KEY_LAST_QUIZ_DATE = "last_quiz_date"
+        private const val KEY_STUDY_STREAK = "study_streak"
+        private const val KEY_MUSCLES_STUDIED_SET = "muscles_studied_set"
     }
 
     private val prefs by lazy {
@@ -90,6 +94,41 @@ class QuizRepository(private val context: Context) {
                 putLong(KEY_FASTEST_TIME, timeSpent)
             }
 
+            // --- GAMIFICACIÓN ---
+            
+            // 1. Calcular y guardar XP
+            val currentXp = prefs.getInt(KEY_TOTAL_XP, 0)
+            val xpEarned = com.villalobos.caballoapp.util.GamificationHelper.calculateXpEarned(score, score == 100)
+            putInt(KEY_TOTAL_XP, currentXp + xpEarned)
+
+            // 2. Calcular Racha (Streak)
+            val lastDate = prefs.getLong(KEY_LAST_QUIZ_DATE, 0L)
+            val today = java.util.Calendar.getInstance().apply {
+                set(java.util.Calendar.HOUR_OF_DAY, 0)
+                set(java.util.Calendar.MINUTE, 0)
+                set(java.util.Calendar.SECOND, 0)
+                set(java.util.Calendar.MILLISECOND, 0)
+            }.timeInMillis
+
+            // Si la última vez fue ayer, incrementar racha. Si fue hoy, mantener. Si fue antes, reiniciar.
+            val oneDayMs = 24 * 60 * 60 * 1000L
+            val diff = today - lastDate
+
+            if (lastDate == 0L) {
+                // Primer quiz ever
+                putInt(KEY_STUDY_STREAK, 1)
+            } else if (diff == oneDayMs) {
+                // Fue ayer, incrementar
+                val currentStreak = prefs.getInt(KEY_STUDY_STREAK, 0)
+                putInt(KEY_STUDY_STREAK, currentStreak + 1)
+            } else if (diff > oneDayMs) {
+                // Se rompió la racha
+                putInt(KEY_STUDY_STREAK, 1)
+            }
+            // Si diff == 0 (fue hoy), no hacemos nada con la racha
+
+            putLong(KEY_LAST_QUIZ_DATE, today)
+
             apply()
         }
     }
@@ -106,15 +145,66 @@ class QuizRepository(private val context: Context) {
             }
         }
 
+        val totalXp = prefs.getInt(KEY_TOTAL_XP, 0)
+        val musclesStudiedSet = prefs.getStringSet(KEY_MUSCLES_STUDIED_SET, emptySet()) ?: emptySet()
+        
         return UserStats(
             totalQuizzes = prefs.getInt(KEY_TOTAL_QUIZZES, 0),
             bestScore = prefs.getInt(KEY_BEST_SCORE, 0),
-            musclesStudied = 0,
-            studyStreak = 0,
+            musclesStudied = musclesStudiedSet.size,
+            studyStreak = prefs.getInt(KEY_STUDY_STREAK, 0),
             perfectQuizzes = prefs.getInt(KEY_PERFECT_QUIZZES, 0),
             fastestQuizTime = prefs.getLong(KEY_FASTEST_TIME, Long.MAX_VALUE),
-            regionScores = regionScores
+            regionScores = regionScores,
+            totalXp = totalXp,
+            level = com.villalobos.caballoapp.util.GamificationHelper.calculateLevel(totalXp),
+            lastQuizDate = prefs.getLong(KEY_LAST_QUIZ_DATE, 0L)
         )
+    }
+
+    /**
+     * Marca un músculo como estudiado.
+     * @param muscleName Nombre del músculo estudiado
+     * @return Cantidad de XP ganada (5 XP por nuevo músculo, 0 si ya fue estudiado)
+     */
+    fun markMuscleAsStudied(muscleName: String): Int {
+        val currentSet = prefs.getStringSet(KEY_MUSCLES_STUDIED_SET, mutableSetOf())?.toMutableSet() ?: mutableSetOf()
+        
+        // Si ya fue estudiado, no dar XP adicional
+        if (currentSet.contains(muscleName)) {
+            return 0
+        }
+        
+        // Agregar el músculo al set
+        currentSet.add(muscleName)
+        
+        // Calcular XP ganada (5 XP por nuevo músculo estudiado)
+        val xpEarned = 5
+        val currentXp = prefs.getInt(KEY_TOTAL_XP, 0)
+        
+        prefs.edit().apply {
+            putStringSet(KEY_MUSCLES_STUDIED_SET, currentSet)
+            putInt(KEY_TOTAL_XP, currentXp + xpEarned)
+            apply()
+        }
+        
+        return xpEarned
+    }
+
+    /**
+     * Verifica si un músculo ya fue estudiado.
+     */
+    fun isMuscleStudied(muscleName: String): Boolean {
+        val currentSet = prefs.getStringSet(KEY_MUSCLES_STUDIED_SET, emptySet()) ?: emptySet()
+        return currentSet.contains(muscleName)
+    }
+
+    /**
+     * Obtiene la cantidad de músculos estudiados.
+     */
+    fun getMusclesStudiedCount(): Int {
+        val currentSet = prefs.getStringSet(KEY_MUSCLES_STUDIED_SET, emptySet()) ?: emptySet()
+        return currentSet.size
     }
 
     /**

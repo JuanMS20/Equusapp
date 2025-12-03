@@ -1,8 +1,9 @@
 package com.villalobos.caballoapp.ui.quiz
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.villalobos.caballoapp.QuizQuestion
+import com.villalobos.caballoapp.data.model.QuizQuestion
 import com.villalobos.caballoapp.data.repository.QuizRepository
+import com.villalobos.caballoapp.data.repository.AchievementRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -32,6 +33,9 @@ class QuizViewModelTest {
     @Mock
     private lateinit var quizRepository: QuizRepository
 
+    @Mock
+    private lateinit var achievementRepository: AchievementRepository
+
     private lateinit var viewModel: QuizViewModel
 
     private val sampleQuestions = listOf(
@@ -57,7 +61,7 @@ class QuizViewModelTest {
     fun setup() {
         MockitoAnnotations.openMocks(this)
         Dispatchers.setMain(testDispatcher)
-        viewModel = QuizViewModel(quizRepository)
+        viewModel = QuizViewModel(quizRepository, achievementRepository)
     }
 
     @After

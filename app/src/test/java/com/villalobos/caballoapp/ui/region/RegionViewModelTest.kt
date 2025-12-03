@@ -1,8 +1,8 @@
 package com.villalobos.caballoapp.ui.region
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.villalobos.caballoapp.Musculo
-import com.villalobos.caballoapp.Region
+import com.villalobos.caballoapp.data.model.Musculo
+import com.villalobos.caballoapp.data.model.Region
 import com.villalobos.caballoapp.data.repository.MusculoRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

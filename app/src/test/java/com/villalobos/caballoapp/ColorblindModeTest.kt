@@ -2,6 +2,7 @@ package com.villalobos.caballoapp
 
 import org.junit.Test
 import org.junit.Assert.*
+import com.villalobos.caballoapp.util.AccesibilityHelper
 
 /**
  * Tests para verificar la correcta configuración de los modos de daltonismo

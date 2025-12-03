@@ -129,6 +129,13 @@ class QuizActivity : BaseNavigationActivity() {
         viewModel.timeElapsed.observe(this) { time ->
             binding.tvTimeInfo.text = "Tiempo: ${formatTime(time)}"
         }
+
+        // Observar nuevos logros desbloqueados
+        viewModel.newAchievements.observe(this) { achievements ->
+            if (achievements.isNotEmpty()) {
+                showNewAchievementsDialog(achievements)
+            }
+        }
     }
 
     private fun startQuiz() {
@@ -220,6 +227,9 @@ class QuizActivity : BaseNavigationActivity() {
 
         val timeFormatted = formatTime(result.timeSpent)
 
+        // Marcar quiz como inactivo para evitar actualizaciones
+        viewModel.abandonQuiz()
+
         AlertDialog.Builder(this)
             .setTitle("¡Quiz Completado!")
             .setMessage(buildString {
@@ -228,16 +238,37 @@ class QuizActivity : BaseNavigationActivity() {
                 append("Tiempo total: $timeFormatted\n")
                 append("Tiempo promedio por pregunta: ${result.averageTimePerQuestion / 1000}s")
             })
-            .setPositiveButton("Ver Respuestas Correctas") { _, _ ->
+            .setPositiveButton("Ver Respuestas Correctas") { dialog, _ ->
+                dialog.dismiss()
                 showCorrectAnswers(result.regionId)
+                finish()
             }
-            .setNegativeButton("Ver Logros") { _, _ ->
+            .setNegativeButton("Ver Logros") { dialog, _ ->
+                dialog.dismiss()
                 showAchievements()
             }
-            .setNeutralButton("Continuar") { _, _ ->
+            .setNeutralButton("Continuar") { dialog, _ ->
+                dialog.dismiss()
                 finish()
             }
             .setCancelable(false)
+            .setOnDismissListener {
+                // Si el diálogo se cierra de cualquier forma, finalizar la activity
+                if (!isFinishing) {
+                    finish()
+                }
+            }
+            .show()
+    }
+
+    private fun showNewAchievementsDialog(achievements: List<com.villalobos.caballoapp.data.model.Achievement>) {
+        val achievementNames = achievements.joinToString("\n") { "🏆 ${it.title}" }
+
+        AlertDialog.Builder(this)
+            .setTitle("¡Nuevos Logros Desbloqueados!")
+            .setMessage("¡Felicidades! Has desbloqueado:\n\n$achievementNames")
+            .setIcon(android.R.drawable.star_big_on)
+            .setPositiveButton("¡Genial!", null)
             .show()
     }
 
@@ -248,13 +279,16 @@ class QuizActivity : BaseNavigationActivity() {
             val achievementNames = unlockedAchievements.joinToString("\n") { "🏆 ${it.title}" }
 
             AlertDialog.Builder(this)
-                .setTitle("¡Logros Desbloqueados!")
+                .setTitle("Tus Logros")
                 .setMessage("Has desbloqueado:\n\n$achievementNames")
-                .setPositiveButton("¡Genial!") { _, _ ->
+                .setPositiveButton("Cerrar") { dialog, _ ->
+                    dialog.dismiss()
                     finish()
                 }
+                .setCancelable(false)
                 .show()
         } else {
+            Toast.makeText(this, "Aún no tienes logros desbloqueados", Toast.LENGTH_SHORT).show()
             finish()
         }
     }
@@ -321,14 +355,18 @@ class QuizActivity : BaseNavigationActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (viewModel.isQuizActive()) {
+        // Solo reiniciar actualizaciones si el quiz está activo y no hemos terminado
+        if (viewModel.isQuizActive() && !isFinishing) {
             startTimeUpdates()
         }
     }
 
     override fun onDestroy() {
         stopTimeUpdates()
-        viewModel.abandonQuiz()
+        // Solo abandonar si todavía está activo
+        if (viewModel.isQuizActive()) {
+            viewModel.abandonQuiz()
+        }
         super.onDestroy()
     }
 

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.villalobos.caballoapp.data.model.Musculo
 import com.villalobos.caballoapp.data.repository.MusculoRepository
+import com.villalobos.caballoapp.data.repository.QuizRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,7 +18,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class DetalleMusculoViewModel @Inject constructor(
-    private val musculoRepository: MusculoRepository
+    private val musculoRepository: MusculoRepository,
+    private val quizRepository: QuizRepository
 ) : ViewModel() {
 
     // ============ Estados ============
@@ -27,7 +29,9 @@ class DetalleMusculoViewModel @Inject constructor(
         val region: Region? = null,
         val isLoading: Boolean = false,
         val error: String? = null,
-        val imageName: String? = null
+        val imageName: String? = null,
+        val xpEarned: Int = 0,
+        val isNewMuscle: Boolean = false
     ) {
         val hasValidData: Boolean
             get() = musculo != null && error == null
@@ -37,6 +41,7 @@ class DetalleMusculoViewModel @Inject constructor(
         object NavigateBack : DetalleEvent()
         data class Error(val message: String) : DetalleEvent()
         data class ImageNotFound(val imageName: String) : DetalleEvent()
+        data class XPEarned(val amount: Int, val muscleName: String) : DetalleEvent()
     }
 
     // ============ LiveData ============
@@ -80,12 +85,23 @@ class DetalleMusculoViewModel @Inject constructor(
                     ?.substringBeforeLast(".")
                     ?.lowercase()
 
+                // Marcar el músculo como estudiado y obtener XP
+                val xpEarned = quizRepository.markMuscleAsStudied(musculo.nombre)
+                val isNewMuscle = xpEarned > 0
+
                 _state.value = DetalleState(
                     musculo = musculo,
                     region = region,
                     isLoading = false,
-                    imageName = imageName
+                    imageName = imageName,
+                    xpEarned = xpEarned,
+                    isNewMuscle = isNewMuscle
                 )
+
+                // Notificar si se ganó XP por nuevo músculo
+                if (isNewMuscle) {
+                    _event.value = DetalleEvent.XPEarned(xpEarned, musculo.nombre)
+                }
 
             } catch (e: Exception) {
                 _state.value = DetalleState(

@@ -139,6 +139,11 @@
     <color name="border_light">#E0E0E0</color>
     <color name="divider">#EEEEEE</color>
     
+    <!-- Gamification colors -->
+    <color name="gold">#FFD700</color>
+    <color name="progress_background">#E0E0E0</color>
+    <color name="background_light">#F5F5F5</color>
+    
     <!-- Paleta de colores para el tema oscuro -->
     <color name="dark_primary">#8C7D6B</color> <!-- Primario tema oscuro -->
     <color name="dark_secondary">#3C3C3C</color> <!-- Secundario tema oscuro -->
