@@ -23,8 +23,8 @@ object DatosMusculares {
             insercion = "Forma un anillo alrededor del ojo, las fibras musculares se insertan en la piel",
             funcion = "Cierre del ojo, protección, parpadeo",
             regionId = 1,
-            hotspotX = 0.241f,
-            hotspotY = 0.120f,
+            hotspotX = 0.261f,
+            hotspotY = 0.100f,
             hotspotNumero = 1,
             descripcion = "Músculo responsable del cierre de los párpados",
             imagen = "orbicularcaballo"
