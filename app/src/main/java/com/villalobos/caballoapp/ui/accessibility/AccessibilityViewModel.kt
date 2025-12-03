@@ -4,7 +4,7 @@ import android.app.Activity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.villalobos.caballoapp.AccesibilityHelper
+import com.villalobos.caballoapp.util.AccesibilityHelper
 import com.villalobos.caballoapp.data.repository.AccessibilityRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

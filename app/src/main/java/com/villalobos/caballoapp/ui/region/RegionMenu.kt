@@ -6,10 +6,10 @@ import android.view.View
 import androidx.activity.viewModels
 import com.villalobos.caballoapp.R
 import com.villalobos.caballoapp.ui.base.BaseNavigationActivity
-import com.villalobos.caballoapp.ErrorHandler
-import com.villalobos.caballoapp.AccesibilityHelper
+import com.villalobos.caballoapp.util.ErrorHandler
+import com.villalobos.caballoapp.util.AccesibilityHelper
 import com.villalobos.caballoapp.databinding.ActivityRegionMenuBinding
-import com.villalobos.caballoapp.ui.menu.RegionMenuViewModel
+import com.villalobos.caballoapp.data.model.TipoRegion
 import dagger.hilt.android.AndroidEntryPoint
 
 /**

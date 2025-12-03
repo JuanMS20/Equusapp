@@ -10,8 +10,8 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import com.villalobos.caballoapp.R
 import com.villalobos.caballoapp.ui.base.AccessibilityActivity
-import com.villalobos.caballoapp.AccesibilityHelper
-import com.villalobos.caballoapp.ErrorHandler
+import com.villalobos.caballoapp.util.AccesibilityHelper
+import com.villalobos.caballoapp.util.ErrorHandler
 import com.villalobos.caballoapp.databinding.ActivityAccesibilidadBinding
 import com.villalobos.caballoapp.ui.tutorial.TutorialActivity
 import dagger.hilt.android.AndroidEntryPoint

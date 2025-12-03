@@ -1,12 +1,14 @@
 package com.villalobos.caballoapp.ui.splash
 
+import com.villalobos.caballoapp.R
+
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.villalobos.caballoapp.ErrorHandler
-import com.villalobos.caballoapp.ImageAnimationHelper
+import com.villalobos.caballoapp.util.ErrorHandler
+import com.villalobos.caballoapp.util.ImageAnimationHelper
 import com.villalobos.caballoapp.databinding.ActivitySplashBinding
 import com.villalobos.caballoapp.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint

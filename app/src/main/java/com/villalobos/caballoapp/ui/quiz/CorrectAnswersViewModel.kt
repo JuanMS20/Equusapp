@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.villalobos.caballoapp.DatosMusculares
-import com.villalobos.caballoapp.data.QuizData
+import com.villalobos.caballoapp.data.source.DatosMusculares
+import com.villalobos.caballoapp.data.source.QuizData
 import com.villalobos.caballoapp.data.model.QuizQuestion
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -74,3 +74,4 @@ class CorrectAnswersViewModel @Inject constructor(
         return question.options.getOrNull(question.correctAnswer) ?: "Respuesta no disponible"
     }
 }
+

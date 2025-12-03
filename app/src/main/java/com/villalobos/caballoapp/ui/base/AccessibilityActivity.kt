@@ -1,8 +1,8 @@
 package com.villalobos.caballoapp.ui.base
 
 import android.os.Bundle
-import com.villalobos.caballoapp.AccesibilityHelper
-import com.villalobos.caballoapp.ErrorHandler
+import com.villalobos.caballoapp.util.AccesibilityHelper
+import com.villalobos.caballoapp.util.ErrorHandler
 
 /**
  * Clase base para actividades que aplican automáticamente la configuración de accesibilidad

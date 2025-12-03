@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import com.villalobos.caballoapp.R
-import com.villalobos.caballoapp.AccesibilityHelper
-import com.villalobos.caballoapp.ErrorHandler
+import com.villalobos.caballoapp.util.AccesibilityHelper
+import com.villalobos.caballoapp.util.ErrorHandler
 import com.villalobos.caballoapp.databinding.ActivityCorrectAnswersBinding
 import com.villalobos.caballoapp.ui.quiz.CorrectAnswersViewModel
 import dagger.hilt.android.AndroidEntryPoint

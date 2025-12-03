@@ -76,19 +76,14 @@
         app:layout_constraintTop_toBottomOf="@+id/headerCard"
         app:layout_constraintHeight_percent="0.40">
 
-        <RelativeLayout
+        <com.villalobos.caballoapp.ui.components.InteractiveAnatomyView
+            android:id="@+id/imgRegion"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/imgRegion"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitCenter"
-                android:src="@drawable/musculo_supraespinoso"
-                android:padding="@dimen/spacing_sm" />
-
-        </RelativeLayout>
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/musculo_supraespinoso"
+            android:padding="@dimen/spacing_sm"
+            android:contentDescription="@string/anatomia_interactiva_description" />
 
     </com.google.android.material.card.MaterialCardView>
 

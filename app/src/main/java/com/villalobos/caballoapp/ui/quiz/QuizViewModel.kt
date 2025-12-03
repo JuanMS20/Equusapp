@@ -4,9 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.villalobos.caballoapp.AchievementData
+import com.villalobos.caballoapp.data.model.Achievement
+import com.villalobos.caballoapp.data.source.AchievementData
 import com.villalobos.caballoapp.data.model.QuizQuestion
-import com.villalobos.caballoapp.UserStats
+import com.villalobos.caballoapp.data.source.UserStats
 import com.villalobos.caballoapp.data.repository.QuizRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -257,8 +258,9 @@ class QuizViewModel @Inject constructor(
     /**
      * Obtiene logros desbloqueados basados en estadísticas actuales.
      */
-    fun getUnlockedAchievements(): List<com.villalobos.caballoapp.Achievement> {
+    fun getUnlockedAchievements(): List<Achievement> {
         val stats = _userStats.value ?: repository.getUserStats()
         return AchievementData.getUnlockedAchievements(stats)
     }
 }
+

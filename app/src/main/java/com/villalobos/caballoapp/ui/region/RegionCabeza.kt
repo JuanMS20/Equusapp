@@ -2,14 +2,14 @@ package com.villalobos.caballoapp.ui.region
 
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.villalobos.caballoapp.R
 import com.villalobos.caballoapp.ui.base.BaseRegionActivity
-import com.villalobos.caballoapp.DatosMusculares
-import com.villalobos.caballoapp.AccesibilityHelper
+import com.villalobos.caballoapp.data.source.DatosMusculares
+import com.villalobos.caballoapp.util.AccesibilityHelper
 import com.villalobos.caballoapp.databinding.ActivityRegionCabezaBinding
+import com.villalobos.caballoapp.ui.components.InteractiveAnatomyView
 
 class RegionCabeza : BaseRegionActivity() {
 
@@ -20,7 +20,7 @@ class RegionCabeza : BaseRegionActivity() {
         setContentView(enlace.root)
     }
 
-    override fun getRegionImageView(): ImageView = enlace.imgRegion
+    override fun getRegionImageView(): InteractiveAnatomyView = enlace.imgRegion
     override fun getTitleTextView(): TextView = enlace.tvTitle
     override fun getMusclesRecyclerView(): RecyclerView = enlace.rvMuscles
     override fun getHomeButton(): ImageButton = enlace.btnHome

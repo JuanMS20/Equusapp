@@ -1,11 +1,11 @@
 package com.villalobos.caballoapp.ui.detail
 
+import com.villalobos.caballoapp.data.model.Region
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.villalobos.caballoapp.Musculo
-import com.villalobos.caballoapp.ui.region.Region
+import com.villalobos.caballoapp.data.model.Musculo
 import com.villalobos.caballoapp.data.repository.MusculoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -172,3 +172,4 @@ class DetalleMusculoViewModel @Inject constructor(
         }
     }
 }
+

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">EquusApp</string>
+    <string name="anatomia_interactiva_description">Imagen anatómica interactiva con %d músculos. Toque para ver detalles.</string>
 </resources>

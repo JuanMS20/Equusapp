@@ -2,20 +2,17 @@ package com.villalobos.caballoapp.ui.base
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.ViewTreeObserver
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
+import com.villalobos.caballoapp.ui.components.InteractiveAnatomyView
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.villalobos.caballoapp.AccesibilityHelper
-import com.villalobos.caballoapp.ErrorHandler
-import com.villalobos.caballoapp.HotspotHelper
-import com.villalobos.caballoapp.ImageAnimationHelper
-import com.villalobos.caballoapp.Musculo
+import com.villalobos.caballoapp.util.AccesibilityHelper
+import com.villalobos.caballoapp.util.ErrorHandler
+import com.villalobos.caballoapp.util.ImageAnimationHelper
+import com.villalobos.caballoapp.data.model.Musculo
 import com.villalobos.caballoapp.ui.region.AdaptadorMusculos
 import com.villalobos.caballoapp.ui.region.RegionViewModel
 import com.villalobos.caballoapp.ui.quiz.QuizActivity
@@ -38,7 +35,7 @@ abstract class BaseRegionActivity : AccessibilityActivity() {
     protected var regionId: Int = 0
 
     // Vistas abstractas que deben ser proporcionadas por las subclases
-    protected abstract fun getRegionImageView(): ImageView
+    protected abstract fun getRegionImageView(): InteractiveAnatomyView
     protected abstract fun getTitleTextView(): TextView
     protected abstract fun getMusclesRecyclerView(): RecyclerView
     protected abstract fun getHomeButton(): ImageButton
@@ -109,6 +106,10 @@ abstract class BaseRegionActivity : AccessibilityActivity() {
                 musculos = state.muscles
                 configurarRecyclerView()
                 
+                // IMPORTANTE: Re-configurar hotspots cuando los músculos se cargan
+                android.util.Log.d("BaseRegionActivity", "📦 Músculos cargados del ViewModel: ${musculos.size}")
+                configurarHotspots()
+                
                 // Animar la imagen de la región
                 ImageAnimationHelper.animateRegionImage(getRegionImageView())
             }
@@ -169,40 +170,31 @@ abstract class BaseRegionActivity : AccessibilityActivity() {
         }
     }
 
+    /**
+     * Configura la detección táctil de músculos en la InteractiveAnatomyView.
+     * Reemplaza el antiguo HotspotHelper que creaba múltiples Views invisibles.
+     */
     protected open fun configurarHotspots() {
         ErrorHandler.safeExecute(
             context = this,
             errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
             errorMessage = "Error al configurar hotspots"
         ) {
-            getRegionImageView().viewTreeObserver.addOnGlobalLayoutListener(object :
-                ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    try {
-                        getRegionImageView().viewTreeObserver.removeOnGlobalLayoutListener(this)
-                        // Crear hotspots dinámicos
-                        val container = getRegionImageView().parent as? RelativeLayout ?: return
-                        HotspotHelper.crearHotspots(
-                            context = this@BaseRegionActivity,
-                            container = container,
-                            imageView = getRegionImageView(),
-                            musculos = musculos,
-                            onClick = { musculo -> 
-                                regionViewModel.navigateToMuscleDetail(musculo)
-                            }
-                        )
-                    } catch (e: Exception) {
-                        ErrorHandler.handleError(
-                            context = this@BaseRegionActivity,
-                            throwable = e,
-                            errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
-                            level = ErrorHandler.ErrorLevel.WARNING,
-                            userMessage = "Error en configuración visual",
-                            canRecover = true
-                        )
-                    }
+            // DEBUG: Verificar que la lista no esté vacía
+            android.util.Log.d("BaseRegionActivity", "🔧 configurarHotspots() - músculos cargados: ${musculos.size}")
+            if (musculos.isEmpty()) {
+                android.util.Log.e("BaseRegionActivity", "❌ ¡ADVERTENCIA! Lista de músculos VACÍA - los hotspots NO funcionarán")
+                android.util.Log.e("BaseRegionActivity", "   Esto puede ocurrir si configurarHotspots() se llama antes de que el ViewModel cargue los datos")
+            } else {
+                musculos.forEach { m ->
+                    android.util.Log.d("BaseRegionActivity", "   -> ${m.nombre}: hotspot=(${m.hotspotX}, ${m.hotspotY})")
                 }
-            })
+            }
+            
+            getRegionImageView().setMusculos(musculos) { musculo ->
+                android.util.Log.d("BaseRegionActivity", "🎯 Músculo seleccionado desde imagen: ${musculo.nombre}")
+                regionViewModel.navigateToMuscleDetail(musculo)
+            }
         }
     }
 

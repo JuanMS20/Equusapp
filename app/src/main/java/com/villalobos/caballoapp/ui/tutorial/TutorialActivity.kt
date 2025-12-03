@@ -6,8 +6,8 @@ import androidx.activity.viewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.villalobos.caballoapp.R
 import com.villalobos.caballoapp.ui.base.BaseNavigationActivity
-import com.villalobos.caballoapp.ErrorHandler
-import com.villalobos.caballoapp.AccesibilityHelper
+import com.villalobos.caballoapp.util.ErrorHandler
+import com.villalobos.caballoapp.util.AccesibilityHelper
 import com.villalobos.caballoapp.databinding.ActivityTutorialBinding
 import com.villalobos.caballoapp.ui.tutorial.TutorialViewModel
 import dagger.hilt.android.AndroidEntryPoint

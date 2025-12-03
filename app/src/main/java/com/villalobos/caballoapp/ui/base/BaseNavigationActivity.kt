@@ -7,8 +7,8 @@ import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
-import com.villalobos.caballoapp.AccesibilityHelper
-import com.villalobos.caballoapp.ErrorHandler
+import com.villalobos.caballoapp.util.AccesibilityHelper
+import com.villalobos.caballoapp.util.ErrorHandler
 import com.villalobos.caballoapp.R
 import com.villalobos.caballoapp.ui.main.MainActivity
 

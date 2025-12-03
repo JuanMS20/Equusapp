@@ -7,11 +7,11 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import com.villalobos.caballoapp.AccesibilityHelper
-import com.villalobos.caballoapp.AchievementData
+import com.villalobos.caballoapp.util.AccesibilityHelper
+import com.villalobos.caballoapp.data.source.AchievementData
 import com.villalobos.caballoapp.ui.base.BaseNavigationActivity
-import com.villalobos.caballoapp.DatosMusculares
-import com.villalobos.caballoapp.ErrorHandler
+import com.villalobos.caballoapp.data.source.DatosMusculares
+import com.villalobos.caballoapp.util.ErrorHandler
 import com.villalobos.caballoapp.data.model.QuizQuestion
 import com.villalobos.caballoapp.databinding.ActivityQuizBinding
 

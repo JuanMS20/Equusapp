@@ -1,9 +1,10 @@
 package com.villalobos.caballoapp.data.repository
 
-import android.content.Context
-import com.villalobos.caballoapp.data.QuizData
 import com.villalobos.caballoapp.data.model.QuizQuestion
-import com.villalobos.caballoapp.UserStats
+import com.villalobos.caballoapp.data.source.QuizData
+
+import android.content.Context
+import com.villalobos.caballoapp.data.source.UserStats
 
 /**
  * Repository para manejar datos del Quiz.

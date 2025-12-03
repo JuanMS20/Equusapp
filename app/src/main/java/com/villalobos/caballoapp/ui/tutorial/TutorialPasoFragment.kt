@@ -9,8 +9,8 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.villalobos.caballoapp.R
-import com.villalobos.caballoapp.ErrorHandler
-import com.villalobos.caballoapp.ImageAnimationHelper
+import com.villalobos.caballoapp.util.ErrorHandler
+import com.villalobos.caballoapp.util.ImageAnimationHelper
 import com.villalobos.caballoapp.databinding.FragmentTutorialPasoBinding
 
 class TutorialPasoFragment : Fragment() {

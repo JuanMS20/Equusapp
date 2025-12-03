@@ -3,7 +3,7 @@ package com.villalobos.caballoapp.data.repository
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import com.villalobos.caballoapp.AccesibilityHelper
+import com.villalobos.caballoapp.util.AccesibilityHelper
 import com.villalobos.caballoapp.ui.main.MainActivity
 
 /**
