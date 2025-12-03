@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_tutorial_gradient"
-    tools:context=".TutorialActivity">
+    tools:context=".ui.tutorial.TutorialActivity">
 
     <!-- Header con indicador de progreso -->
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
-    tools:context=".CorrectAnswersActivity">
+    tools:context=".ui.quiz.CorrectAnswersActivity">
 
     <!-- Header -->
     <androidx.cardview.widget.CardView
@@ -57,7 +57,7 @@
                 android:padding="12dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_arrow_back"
-                android:tint="@color/primary_brown" />
+                app:tint="@color/primary_brown" />
 
         </RelativeLayout>
 
