@@ -198,3 +198,18 @@ object AchievementData {
         }
     }
 }
+
+// Clase auxiliar para estadísticas del usuario (simplificada)
+data class UserStats(
+    val totalQuizzes: Int = 0,
+    val bestScore: Int = 0,
+    val musclesStudied: Int = 0,
+    val studyStreak: Int = 0,
+    val perfectQuizzes: Int = 0,
+    val fastestQuizTime: Long = Long.MAX_VALUE,
+    val regionScores: Map<Int, Int> = emptyMap()
+) {
+    fun getRegionScore(regionId: Int): Int {
+        return regionScores[regionId] ?: 0
+    }
+}

@@ -5,6 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.villalobos.caballoapp.util.AccesibilityHelper
+import com.villalobos.caballoapp.data.model.AccessibilityConfig
+import com.villalobos.caballoapp.data.model.ColorblindType
+import com.villalobos.caballoapp.data.model.TextScale
 import com.villalobos.caballoapp.data.repository.AccessibilityRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -22,9 +25,9 @@ class AccessibilityViewModel @Inject constructor(
     // ============ Estados ============
 
     data class AccessibilityState(
-        val colorblindType: AccesibilityHelper.ColorblindType = AccesibilityHelper.ColorblindType.NONE,
+        val colorblindType: ColorblindType = ColorblindType.NONE,
         val highContrast: Boolean = false,
-        val textScale: AccesibilityHelper.TextScale = AccesibilityHelper.TextScale.NORMAL,
+        val textScale: TextScale = TextScale.NORMAL,
         val hasUnsavedChanges: Boolean = false
     )
 
@@ -43,7 +46,7 @@ class AccessibilityViewModel @Inject constructor(
     private val _event = MutableLiveData<AccessibilityEvent?>()
     val event: LiveData<AccessibilityEvent?> = _event
 
-    private var initialConfig: AccesibilityHelper.AccessibilityConfig? = null
+    private var initialConfig: AccessibilityConfig? = null
 
     // ============ Inicialización ============
 
@@ -71,7 +74,7 @@ class AccessibilityViewModel @Inject constructor(
     /**
      * Establece el tipo de daltonismo.
      */
-    fun setColorblindType(type: AccesibilityHelper.ColorblindType) {
+    fun setColorblindType(type: ColorblindType) {
         val currentState = _state.value ?: return
 
         _state.value = currentState.copy(
@@ -89,7 +92,7 @@ class AccessibilityViewModel @Inject constructor(
      * Desactiva el modo daltonismo.
      */
     fun disableColorblindMode() {
-        setColorblindType(AccesibilityHelper.ColorblindType.NONE)
+        setColorblindType(ColorblindType.NONE)
     }
 
     /**
@@ -109,7 +112,7 @@ class AccessibilityViewModel @Inject constructor(
      */
     fun setLargeText(enabled: Boolean) {
         val currentState = _state.value ?: return
-        val newScale = if (enabled) AccesibilityHelper.TextScale.LARGE else AccesibilityHelper.TextScale.NORMAL
+        val newScale = if (enabled) TextScale.LARGE else TextScale.NORMAL
 
         _state.value = currentState.copy(
             textScale = newScale,
@@ -123,7 +126,7 @@ class AccessibilityViewModel @Inject constructor(
     fun saveConfig() {
         val currentState = _state.value ?: return
 
-        val config = AccesibilityHelper.AccessibilityConfig(
+        val config = AccessibilityConfig(
             colorblindType = currentState.colorblindType,
             highContrast = currentState.highContrast,
             textScale = currentState.textScale
@@ -146,7 +149,7 @@ class AccessibilityViewModel @Inject constructor(
         val currentState = _state.value ?: return
         
         // Guardar temporalmente para aplicar
-        val config = AccesibilityHelper.AccessibilityConfig(
+        val config = AccessibilityConfig(
             colorblindType = currentState.colorblindType,
             highContrast = currentState.highContrast,
             textScale = currentState.textScale
@@ -155,20 +158,12 @@ class AccessibilityViewModel @Inject constructor(
 
         // Aplicar colores según el tipo
         when (currentState.colorblindType) {
-            AccesibilityHelper.ColorblindType.NONE -> {
+            ColorblindType.NONE, ColorblindType.NORMAL -> {
                 repository.restoreOriginalColors(activity)
             }
-            AccesibilityHelper.ColorblindType.PROTANOPIA -> {
-                AccesibilityHelper.adjustForProtanopia(activity, activity)
-            }
-            AccesibilityHelper.ColorblindType.DEUTERANOPIA -> {
-                AccesibilityHelper.adjustForDeuteranopia(activity, activity)
-            }
-            AccesibilityHelper.ColorblindType.TRITANOPIA -> {
-                AccesibilityHelper.adjustForTritanopia(activity, activity)
-            }
-            AccesibilityHelper.ColorblindType.ACHROMATOPSIA -> {
-                AccesibilityHelper.adjustForAchromatopsia(activity, activity)
+            else -> {
+                // Aplicar colores específicos de accesibilidad
+                repository.applyAccessibilityColors(activity)
             }
         }
 
@@ -211,31 +206,31 @@ class AccessibilityViewModel @Inject constructor(
         val currentState = _state.value ?: return emptyList()
         
         return when (currentState.colorblindType) {
-            AccesibilityHelper.ColorblindType.NONE -> listOf(
+            ColorblindType.NONE, ColorblindType.NORMAL -> listOf(
                 0xFFFF0000.toInt(), // Rojo
                 0xFF00FF00.toInt(), // Verde
                 0xFF0000FF.toInt(), // Azul
                 0xFFFFFF00.toInt()  // Amarillo
             )
-            AccesibilityHelper.ColorblindType.PROTANOPIA -> listOf(
+            ColorblindType.PROTANOPIA -> listOf(
                 0xFFB8860B.toInt(), // Marrón
                 0xFF00FF00.toInt(), // Verde
                 0xFF0000FF.toInt(), // Azul
                 0xFFFFFF00.toInt()  // Amarillo
             )
-            AccesibilityHelper.ColorblindType.DEUTERANOPIA -> listOf(
+            ColorblindType.DEUTERANOPIA -> listOf(
                 0xFFFF0000.toInt(), // Rojo
                 0xFF8B0000.toInt(), // Rojo oscuro
                 0xFF0000FF.toInt(), // Azul
                 0xFFFF1493.toInt()  // Rosa magenta
             )
-            AccesibilityHelper.ColorblindType.TRITANOPIA -> listOf(
+            ColorblindType.TRITANOPIA -> listOf(
                 0xFFFF0000.toInt(), // Rojo
                 0xFF00FF00.toInt(), // Verde
                 0xFFFF1493.toInt(), // Rosa
                 0xFFFF69B4.toInt()  // Rosa claro
             )
-            AccesibilityHelper.ColorblindType.ACHROMATOPSIA -> listOf(
+            ColorblindType.ACHROMATOPSIA -> listOf(
                 0xFF666666.toInt(),
                 0xFF999999.toInt(),
                 0xFF333333.toInt(),
@@ -253,13 +248,13 @@ class AccessibilityViewModel @Inject constructor(
      * Verifica si el botón de desactivar debe mostrarse.
      */
     fun shouldShowDisableButton(): Boolean {
-        return _state.value?.colorblindType != AccesibilityHelper.ColorblindType.NONE
+        return _state.value?.colorblindType != ColorblindType.NONE
     }
 
     private fun hasChanges(
-        colorblindType: AccesibilityHelper.ColorblindType,
+        colorblindType: ColorblindType,
         highContrast: Boolean,
-        textScale: AccesibilityHelper.TextScale
+        textScale: TextScale
     ): Boolean {
         val initial = initialConfig ?: return false
         return colorblindType != initial.colorblindType ||

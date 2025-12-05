@@ -62,18 +62,6 @@
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="false" />
-        <activity
-            android:name=".ui.achievements.AchievementsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.gamification.GamificationActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.stats.StatsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.quiz.QuizResultActivity"
-            android:exported="false" />
     </application>
 
 </manifest>

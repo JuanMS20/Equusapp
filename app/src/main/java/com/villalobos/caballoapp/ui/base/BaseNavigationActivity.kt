@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
 import com.villalobos.caballoapp.util.AccesibilityHelper
 import com.villalobos.caballoapp.util.ErrorHandler
+import com.villalobos.caballoapp.data.model.ColorblindType
 import com.villalobos.caballoapp.R
 import com.villalobos.caballoapp.ui.main.MainActivity
 
@@ -68,11 +69,11 @@ abstract class BaseNavigationActivity : AppCompatActivity() {
             // Aplicar colores adaptativos según el modo de daltonismo
             val config = AccesibilityHelper.getAccessibilityConfig(this)
             val colorTint = when (config.colorblindType) {
-                AccesibilityHelper.ColorblindType.PROTANOPIA -> ContextCompat.getColor(this, R.color.protanopia_primary)
-                AccesibilityHelper.ColorblindType.DEUTERANOPIA -> ContextCompat.getColor(this, R.color.deuteranopia_primary)
-                AccesibilityHelper.ColorblindType.TRITANOPIA -> ContextCompat.getColor(this, R.color.tritanopia_primary)
-                AccesibilityHelper.ColorblindType.ACHROMATOPSIA -> ContextCompat.getColor(this, R.color.achromatopsia_dark_gray)
-                else -> ContextCompat.getColor(this, R.color.primary_brown)
+                ColorblindType.PROTANOPIA -> ContextCompat.getColor(this, R.color.protanopia_primary)
+                ColorblindType.DEUTERANOPIA -> ContextCompat.getColor(this, R.color.deuteranopia_primary)
+                ColorblindType.TRITANOPIA -> ContextCompat.getColor(this, R.color.tritanopia_primary)
+                ColorblindType.ACHROMATOPSIA -> ContextCompat.getColor(this, R.color.achromatopsia_dark_gray)
+                ColorblindType.NORMAL, ColorblindType.NONE -> ContextCompat.getColor(this, R.color.primary_brown)
             }
             
             // Aplicar según el tipo de vista

@@ -6,9 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
-    tools:context=".RegionCabeza">
+    tools:context=".ui.region.RegionCabeza">
 
-    <!-- Header Card Modernizado -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/headerCard"
         android:layout_width="0dp"
@@ -55,12 +54,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="@color/text_on_dark" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Card de Imagen -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardImage"
         android:layout_width="0dp"
@@ -76,18 +73,177 @@
         app:layout_constraintTop_toBottomOf="@+id/headerCard"
         app:layout_constraintHeight_percent="0.40">
 
-        <com.villalobos.caballoapp.ui.components.InteractiveAnatomyView
-            android:id="@+id/imgRegion"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:src="@drawable/cabeza_lateral"
-            android:padding="@dimen/spacing_sm"
-            android:contentDescription="@string/anatomia_interactiva_description" />
+            android:layout_height="match_parent">
+
+            <!-- Zona 1: Parieto-Temporal (ID: 1001) -->
+
+            <!-- Zona 2: Auricular (ID: 1002) -->
+
+            <!-- Zona 3: Orbital (ID: 1003) -->
+
+            <!-- Zona 4: Mentoniana (ID: 1004) -->
+
+            <!-- Zona 5: Maxilar (ID: 1005) -->
+
+            <!-- Zona 6: Mandibular (ID: 1006) -->
+
+            <!-- Zona 7: Mesetérica (ID: 1007) -->
+
+            <!-- Zona 8: Bucal (ID: 1008) -->
+
+            <!-- Zona 1: Parieto-Temporal (ROJO) - Detrás del ojo/sien -->
+            <com.villalobos.caballoapp.ui.components.InteractiveAnatomyView
+                android:id="@+id/imgRegion"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@string/anatomia_interactiva_description"
+                android:scaleType="fitXY"
+                android:src="@drawable/cabeza_lateral"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <!-- Zona 2: Auricular (VERDE) - Oreja -->
+
+            <!-- Zona 3: Orbital (AZUL) - Ojo -->
+
+            <View
+                android:id="@+id/hotspotZona1001"
+                android:layout_width="43dp"
+                android:layout_height="42dp"
+                android:background="#80FF0000"
+                android:clickable="true"
+                android:contentDescription="Zona Parieto-Temporal (ROJO)"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.629"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.279" />
+
+            <View
+                android:id="@+id/hotspotZona1002"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="#8000FF00"
+                android:clickable="true"
+                android:contentDescription="Zona Auricular (VERDE)"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.641"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.107" />
+
+            <View
+                android:id="@+id/hotspotZona1003"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="#800000FF"
+                android:clickable="true"
+                android:contentDescription="Zona Orbital (AZUL)"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.78"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.38" />
+
+            <!-- Zona 4: Mentoniana (AMARILLO) - Barbilla -->
+            <View
+                android:id="@+id/hotspotZona1004"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="#80FFFF00"
+                android:clickable="true"
+                android:contentDescription="Zona Mentoniana (AMARILLO)"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.88"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.82" />
+
+            <!-- Zona 5: Maxilar (MAGENTA) - Puente nasal -->
+            <View
+                android:id="@+id/hotspotZona1005"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="#80FF00FF"
+                android:clickable="true"
+                android:contentDescription="Zona Maxilar (MAGENTA)"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.82"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.55" />
+
+            <!-- Zona 6: Mandibular (CIAN) - Mandíbula inferior -->
+
+            <!-- Zona 7: Mesetérica (NARANJA) - Mejilla grande -->
+
+            <!-- Zona 8: Bucal (MORADO) - Comisura boca -->
+
+            <View
+                android:id="@+id/hotspotZona1006"
+                android:layout_width="61dp"
+                android:layout_height="37dp"
+                android:background="#8000FFFF"
+                android:clickable="true"
+                android:contentDescription="Zona Mandibular (CIAN)"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.442"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.559" />
+
+            <View
+                android:id="@+id/hotspotZona1007"
+                android:layout_width="79dp"
+                android:layout_height="37dp"
+                android:background="#80FFA500"
+                android:clickable="true"
+                android:contentDescription="Zona Mesetérica (NARANJA)"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.43"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.438" />
+
+            <View
+                android:id="@+id/hotspotZona1008"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="#80800080"
+                android:clickable="true"
+                android:contentDescription="Zona Bucal (MORADO)"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.85"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.68" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Título de instrucciones -->
     <TextView
         android:id="@+id/tvInstructions"
         android:layout_width="wrap_content"
@@ -112,7 +268,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvInstructions" />
 
-    <!-- Lista de músculos -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMuscles"
         android:layout_width="0dp"
@@ -126,7 +281,6 @@
         app:layout_constraintTop_toBottomOf="@+id/tvSubInstructions"
         app:layout_constraintBottom_toTopOf="@+id/btnQuizRegion" />
 
-    <!-- Botón de Quiz modernizado -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnQuizRegion"
         style="@style/Widget.EquusApp.Button.Primary"

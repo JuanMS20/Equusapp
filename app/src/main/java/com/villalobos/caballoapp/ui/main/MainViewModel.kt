@@ -5,10 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import com.villalobos.caballoapp.data.repository.QuizRepository
-import com.villalobos.caballoapp.data.source.UserStats
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -18,8 +14,7 @@ import javax.inject.Named
  */
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    @Named("tutorial_prefs") private val sharedPreferences: SharedPreferences,
-    private val quizRepository: QuizRepository
+    @Named("tutorial_prefs") private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
     companion object {
@@ -44,14 +39,10 @@ class MainViewModel @Inject constructor(
     private val _shouldShowTutorial = MutableLiveData<Boolean>()
     val shouldShowTutorial: LiveData<Boolean> = _shouldShowTutorial
 
-    private val _userStats = MutableLiveData<UserStats>()
-    val userStats: LiveData<UserStats> = _userStats
-
     // ============ Inicialización ============
 
     init {
         checkFirstTimeUser()
-        loadUserStats()
     }
 
     // ============ Acciones ============
@@ -82,12 +73,6 @@ class MainViewModel @Inject constructor(
             .putBoolean(KEY_NO_MOSTRAR_TUTORIAL, false)
             .apply()
         _shouldShowTutorial.value = true
-    }
-
-    fun loadUserStats() {
-        viewModelScope.launch {
-            _userStats.value = quizRepository.getUserStats()
-        }
     }
 
     // ============ Navegación ============

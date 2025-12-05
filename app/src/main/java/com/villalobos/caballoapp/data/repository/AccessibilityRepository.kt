@@ -4,6 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import com.villalobos.caballoapp.util.AccesibilityHelper
+import com.villalobos.caballoapp.data.model.AccessibilityConfig
+import com.villalobos.caballoapp.data.model.ColorblindType
+import com.villalobos.caballoapp.data.model.TextScale
 import com.villalobos.caballoapp.ui.main.MainActivity
 
 /**
@@ -28,21 +31,21 @@ class AccessibilityRepository(private val context: Context) {
     /**
      * Obtiene la configuración actual de accesibilidad.
      */
-    fun getAccessibilityConfig(): AccesibilityHelper.AccessibilityConfig {
+    fun getAccessibilityConfig(): AccessibilityConfig {
         return AccesibilityHelper.getAccessibilityConfig(context)
     }
 
     /**
      * Guarda la configuración de accesibilidad.
      */
-    fun saveAccessibilityConfig(config: AccesibilityHelper.AccessibilityConfig) {
+    fun saveAccessibilityConfig(config: AccessibilityConfig) {
         AccesibilityHelper.saveAccessibilityConfig(context, config)
     }
 
     /**
      * Obtiene el tipo de daltonismo configurado.
      */
-    fun getColorblindType(): AccesibilityHelper.ColorblindType {
+    fun getColorblindType(): ColorblindType {
         val config = getAccessibilityConfig()
         return config.colorblindType
     }
@@ -50,7 +53,7 @@ class AccessibilityRepository(private val context: Context) {
     /**
      * Establece el tipo de daltonismo.
      */
-    fun setColorblindType(type: AccesibilityHelper.ColorblindType) {
+    fun setColorblindType(type: ColorblindType) {
         val currentConfig = getAccessibilityConfig()
         val newConfig = currentConfig.copy(colorblindType = type)
         saveAccessibilityConfig(newConfig)
@@ -78,8 +81,8 @@ class AccessibilityRepository(private val context: Context) {
      */
     fun isLargeTextEnabled(): Boolean {
         val config = getAccessibilityConfig()
-        return config.textScale == AccesibilityHelper.TextScale.LARGE || 
-               config.textScale == AccesibilityHelper.TextScale.EXTRA_LARGE
+        return config.textScale == TextScale.LARGE || 
+               config.textScale == TextScale.EXTRA_LARGE
     }
 
     /**
@@ -87,7 +90,7 @@ class AccessibilityRepository(private val context: Context) {
      */
     fun setLargeText(enabled: Boolean) {
         val currentConfig = getAccessibilityConfig()
-        val newScale = if (enabled) AccesibilityHelper.TextScale.LARGE else AccesibilityHelper.TextScale.NORMAL
+        val newScale = if (enabled) TextScale.LARGE else TextScale.NORMAL
         val newConfig = currentConfig.copy(textScale = newScale)
         saveAccessibilityConfig(newConfig)
     }
@@ -120,26 +123,26 @@ class AccessibilityRepository(private val context: Context) {
     /**
      * Obtiene el nombre legible del tipo de daltonismo.
      */
-    fun getColorblindTypeName(type: AccesibilityHelper.ColorblindType): String {
+    fun getColorblindTypeName(type: ColorblindType): String {
         return when (type) {
-            AccesibilityHelper.ColorblindType.NONE -> "Colores estándar"
-            AccesibilityHelper.ColorblindType.PROTANOPIA -> "Protanopia"
-            AccesibilityHelper.ColorblindType.DEUTERANOPIA -> "Deuteranopia"
-            AccesibilityHelper.ColorblindType.TRITANOPIA -> "Tritanopia"
-            AccesibilityHelper.ColorblindType.ACHROMATOPSIA -> "Acromatopsia"
+            ColorblindType.NONE, ColorblindType.NORMAL -> "Colores estándar"
+            ColorblindType.PROTANOPIA -> "Protanopia"
+            ColorblindType.DEUTERANOPIA -> "Deuteranopia"
+            ColorblindType.TRITANOPIA -> "Tritanopia"
+            ColorblindType.ACHROMATOPSIA -> "Acromatopsia"
         }
     }
 
     /**
      * Obtiene la descripción del tipo de daltonismo.
      */
-    fun getColorblindTypeDescription(type: AccesibilityHelper.ColorblindType): String {
+    fun getColorblindTypeDescription(type: ColorblindType): String {
         return when (type) {
-            AccesibilityHelper.ColorblindType.NONE -> "Visión normal de colores"
-            AccesibilityHelper.ColorblindType.PROTANOPIA -> "Dificultad para distinguir rojos"
-            AccesibilityHelper.ColorblindType.DEUTERANOPIA -> "Dificultad para distinguir verdes"
-            AccesibilityHelper.ColorblindType.TRITANOPIA -> "Dificultad para distinguir azules y amarillos"
-            AccesibilityHelper.ColorblindType.ACHROMATOPSIA -> "Visión en escala de grises"
+            ColorblindType.NONE, ColorblindType.NORMAL -> "Visión normal de colores"
+            ColorblindType.PROTANOPIA -> "Dificultad para distinguir rojos"
+            ColorblindType.DEUTERANOPIA -> "Dificultad para distinguir verdes"
+            ColorblindType.TRITANOPIA -> "Dificultad para distinguir azules y amarillos"
+            ColorblindType.ACHROMATOPSIA -> "Visión en escala de grises"
         }
     }
 }

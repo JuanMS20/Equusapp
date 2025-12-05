@@ -12,10 +12,6 @@ android {
     viewBinding {
         enable = true
     }
-    
-    buildFeatures {
-        buildConfig = true
-    }
 
     defaultConfig {
         applicationId = "com.villalobos.caballoapp"
@@ -73,11 +69,6 @@ dependencies {
     // Hilt - Dependency Injection
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    
-    // Room for local persistence
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
     
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)

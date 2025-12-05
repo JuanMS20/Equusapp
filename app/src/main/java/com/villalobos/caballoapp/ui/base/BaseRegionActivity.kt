@@ -324,9 +324,6 @@ abstract class BaseRegionActivity : AccessibilityActivity() {
 
     override fun onDestroy() {
         try {
-            // Limpiar la InteractiveAnatomyView para cancelar runnables pendientes
-            getRegionImageView().clearMusculos()
-            
             super.onDestroy()
         } catch (e: Exception) {
             ErrorHandler.handleError(
