@@ -49,6 +49,7 @@ class MusculoRepository @Inject constructor() {
      * Obtiene los músculos de una región específica.
      */
     fun getMusclesByRegion(regionId: Int): List<Musculo> {
+        // LINEA 52 (CORREGIDA AL AÑADIR obtenerMusculosPorRegion en DatosMusculares)
         return DatosMusculares.obtenerMusculosPorRegion(regionId)
     }
 
@@ -64,11 +65,11 @@ class MusculoRepository @Inject constructor() {
      */
     fun searchMuscles(query: String): List<Musculo> {
         if (query.isBlank()) return emptyList()
-        
+
         val lowerQuery = query.lowercase()
         return getAllMuscles().filter { musculo ->
             musculo.nombre.lowercase().contains(lowerQuery) ||
-            musculo.descripcion.lowercase().contains(lowerQuery)
+                    musculo.descripcion.lowercase().contains(lowerQuery)
         }
     }
 

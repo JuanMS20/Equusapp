@@ -7,4 +7,10 @@ data class Musculo(
     val insercion: String,
     val funcion: String, // Contiene la Biomecánica
     val regionId: Int,
+<<<<<<< Updated upstream
+=======
+    val descripcion: String = "",
+    val imagen: String? = null // Imagen de detalle del músculo, no la zona
+
+>>>>>>> Stashed changes
 )
