@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
-import com.villalobos.caballoapp.BuildConfig
 import com.villalobos.caballoapp.data.model.Musculo
 import com.villalobos.caballoapp.R
 import kotlin.math.hypot
@@ -110,10 +109,6 @@ class InteractiveAnatomyView @JvmOverloads constructor(
     // DEBUG: Último punto tocado en pantalla
     private var lastTouchScreenPoint: PointF? = null
     
-    // Handler para cancelar postDelayed pendientes
-    private val feedbackHandler = android.os.Handler(android.os.Looper.getMainLooper())
-    private var pendingFeedbackRunnable: Runnable? = null
-    
     private val feedbackPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         alpha = FEEDBACK_ALPHA
@@ -175,9 +170,7 @@ class InteractiveAnatomyView @JvmOverloads constructor(
         isClickable = true
         isFocusable = true
         
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, "✅ InteractiveAnatomyView inicializada. debugMode=$debugMode, touchTolerance=$touchTolerance")
-        }
+        Log.d(TAG, "✅ InteractiveAnatomyView inicializada. debugMode=$debugMode, touchTolerance=$touchTolerance")
     }
 
     // ============ API Pública ============
@@ -192,11 +185,9 @@ class InteractiveAnatomyView @JvmOverloads constructor(
         this.musculos = musculos
         this.onMusculoClickListener = listener
         
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, "📋 setMusculos() llamado con ${musculos.size} músculos:")
-            musculos.forEachIndexed { index, m ->
-                Log.d(TAG, "   [$index] ${m.nombre}: hotspot=(${m.hotspotX}, ${m.hotspotY})")
-            }
+        Log.d(TAG, "📋 setMusculos() llamado con ${musculos.size} músculos:")
+        musculos.forEachIndexed { index, m ->
+            Log.d(TAG, "   [$index] ${m.nombre}: hotspot=(${m.hotspotX}, ${m.hotspotY})")
         }
         
         // Forzar redibujado para mostrar hotspots de debug
@@ -218,22 +209,7 @@ class InteractiveAnatomyView @JvmOverloads constructor(
         lastTouchedPoint = null
         lastTouchedMusculo = null
         lastTouchScreenPoint = null
-        
-        // Cancelar cualquier runnable pendiente
-        cancelPendingFeedback()
-        
         invalidate()
-    }
-    
-    /**
-     * Cancela cualquier feedback visual pendiente.
-     * Llamar en onDestroy() de la Activity o cuando se limpie la vista.
-     */
-    fun cancelPendingFeedback() {
-        pendingFeedbackRunnable?.let { 
-            feedbackHandler.removeCallbacks(it)
-        }
-        pendingFeedbackRunnable = null
     }
 
     /**
@@ -251,9 +227,7 @@ class InteractiveAnatomyView @JvmOverloads constructor(
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (musculos.isEmpty()) {
-            if (BuildConfig.DEBUG) {
-                Log.w(TAG, "⚠️ onTouchEvent: Lista de músculos VACÍA - no se procesará el toque")
-            }
+            Log.w(TAG, "⚠️ onTouchEvent: Lista de músculos VACÍA - no se procesará el toque")
             return super.onTouchEvent(event)
         }
 
@@ -265,50 +239,40 @@ class InteractiveAnatomyView @JvmOverloads constructor(
                 // DEBUG: Guardar punto de toque en pantalla
                 lastTouchScreenPoint = PointF(screenX, screenY)
                 
-                if (BuildConfig.DEBUG) {
-                    Log.d(TAG, "👆 ACTION_DOWN en pantalla: ($screenX, $screenY)")
-                    Log.d(TAG, "   View size: ${width}x${height}")
-                }
+                Log.d(TAG, "👆 ACTION_DOWN en pantalla: ($screenX, $screenY)")
+                Log.d(TAG, "   View size: ${width}x${height}")
                 
                 // Convertir coordenadas de pantalla a normalizadas
                 val normalized = screenToNormalizedCoordinates(screenX, screenY)
                 
                 if (normalized != null) {
-                    if (BuildConfig.DEBUG) {
-                        Log.d(TAG, "   Coordenadas normalizadas: (${normalized.x}, ${normalized.y})")
-                        
-                        // DEBUG: Calcular y mostrar distancia a TODOS los músculos
-                        musculos.forEach { m ->
-                            val dist = hypot(
-                                (normalized.x - m.hotspotX).toDouble(),
-                                (normalized.y - m.hotspotY).toDouble()
-                            ).toFloat()
-                            val dentro = if (dist < touchTolerance) "✅ DENTRO" else "❌ fuera"
-                            Log.d(TAG, "   -> ${m.nombre}: dist=${"%.4f".format(dist)} (tolerancia=$touchTolerance) $dentro")
-                        }
+                    Log.d(TAG, "   Coordenadas normalizadas: (${normalized.x}, ${normalized.y})")
+                    
+                    // DEBUG: Calcular y mostrar distancia a TODOS los músculos
+                    musculos.forEach { m ->
+                        val dist = hypot(
+                            (normalized.x - m.hotspotX).toDouble(),
+                            (normalized.y - m.hotspotY).toDouble()
+                        ).toFloat()
+                        val dentro = if (dist < touchTolerance) "✅ DENTRO" else "❌ fuera"
+                        Log.d(TAG, "   -> ${m.nombre}: dist=${"%.4f".format(dist)} (tolerancia=$touchTolerance) $dentro")
                     }
                     
                     val musculo = findNearestMusculo(normalized.x, normalized.y)
                     
                     if (musculo != null) {
-                        if (BuildConfig.DEBUG) {
-                            Log.d(TAG, "   🎯 Músculo DETECTADO: ${musculo.nombre}")
-                        }
+                        Log.d(TAG, "   🎯 Músculo DETECTADO: ${musculo.nombre}")
                         lastTouchedPoint = normalized
                         lastTouchedMusculo = musculo
                     } else {
-                        if (BuildConfig.DEBUG) {
-                            Log.d(TAG, "   ❌ Ningún músculo dentro del rango de tolerancia")
-                        }
+                        Log.d(TAG, "   ❌ Ningún músculo dentro del rango de tolerancia")
                         lastTouchedPoint = normalized
                         lastTouchedMusculo = null
                     }
                     
                     invalidate()
                 } else {
-                    if (BuildConfig.DEBUG) {
-                        Log.w(TAG, "   ⚠️ Toque FUERA de los límites de la imagen")
-                    }
+                    Log.w(TAG, "   ⚠️ Toque FUERA de los límites de la imagen")
                 }
                 return true
             }
@@ -320,39 +284,28 @@ class InteractiveAnatomyView @JvmOverloads constructor(
                     val musculo = findNearestMusculo(normalized.x, normalized.y)
                     
                     if (musculo != null) {
-                        if (BuildConfig.DEBUG) {
-                            Log.d(TAG, "👆 ACTION_UP - Invocando listener para: ${musculo.nombre}")
-                        }
+                        Log.d(TAG, "👆 ACTION_UP - Invocando listener para: ${musculo.nombre}")
                         // Invocar listener
                         onMusculoClickListener?.invoke(musculo)
                         
                         // Limpiar feedback después de un delay
                         if (showTouchFeedback) {
-                            // Cancelar cualquier runnable anterior
-                            cancelPendingFeedback()
-                            
-                            pendingFeedbackRunnable = Runnable {
+                            postDelayed({
                                 lastTouchedPoint = null
                                 lastTouchedMusculo = null
                                 lastTouchScreenPoint = null
                                 invalidate()
-                            }
-                            feedbackHandler.postDelayed(pendingFeedbackRunnable!!, feedbackDuration)
+                            }, feedbackDuration)
                         }
                     } else {
-                        if (BuildConfig.DEBUG) {
-                            Log.d(TAG, "👆 ACTION_UP - Sin músculo detectado")
-                        }
+                        Log.d(TAG, "👆 ACTION_UP - Sin músculo detectado")
                         // Limpiar después de un delay para ver el debug
-                        cancelPendingFeedback()
-                        
-                        pendingFeedbackRunnable = Runnable {
+                        postDelayed({
                             lastTouchedPoint = null
                             lastTouchedMusculo = null
                             lastTouchScreenPoint = null
                             invalidate()
-                        }
-                        feedbackHandler.postDelayed(pendingFeedbackRunnable!!, 2000L) // 2 segundos para debug
+                        }, 2000L) // 2 segundos para debug
                     }
                 }
                 
@@ -388,9 +341,7 @@ class InteractiveAnatomyView @JvmOverloads constructor(
      */
     private fun screenToNormalizedCoordinates(screenX: Float, screenY: Float): PointF? {
         val drawable = drawable ?: run {
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "❌ screenToNormalized: drawable es NULL")
-            }
+            Log.e(TAG, "❌ screenToNormalized: drawable es NULL")
             return null
         }
         
@@ -398,15 +349,11 @@ class InteractiveAnatomyView @JvmOverloads constructor(
         val intrinsicHeight = drawable.intrinsicHeight.toFloat()
         
         if (intrinsicWidth <= 0 || intrinsicHeight <= 0) {
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "❌ screenToNormalized: dimensiones inválidas ($intrinsicWidth x $intrinsicHeight)")
-            }
+            Log.e(TAG, "❌ screenToNormalized: dimensiones inválidas ($intrinsicWidth x $intrinsicHeight)")
             return null
         }
         
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, "   Drawable intrinsic size: $intrinsicWidth x $intrinsicHeight")
-        }
+        Log.d(TAG, "   Drawable intrinsic size: $intrinsicWidth x $intrinsicHeight")
 
         // Obtener la matriz inversa de transformación
         imageMatrix.invert(inverseMatrix)
@@ -418,9 +365,7 @@ class InteractiveAnatomyView @JvmOverloads constructor(
         val imageX = points[0]
         val imageY = points[1]
         
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, "   Coordenadas en imagen: ($imageX, $imageY)")
-        }
+        Log.d(TAG, "   Coordenadas en imagen: ($imageX, $imageY)")
         
         // Para debug, NO rechazar si está fuera - normalizar con coerce
         // En producción, descomentar la validación

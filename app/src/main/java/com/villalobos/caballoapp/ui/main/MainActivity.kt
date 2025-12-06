@@ -3,14 +3,16 @@ package com.villalobos.caballoapp.ui.main
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import androidx.activity.viewModels
+import com.villalobos.caballoapp.R
 import com.villalobos.caballoapp.ui.base.AccessibilityActivity
+import com.villalobos.caballoapp.util.AccesibilityHelper
+import com.villalobos.caballoapp.util.ErrorHandler
 import com.villalobos.caballoapp.ui.accessibility.Accesibilidad
 import com.villalobos.caballoapp.ui.credits.Creditos
 import com.villalobos.caballoapp.ui.region.RegionMenu
 import com.villalobos.caballoapp.ui.tutorial.TutorialActivity
-import com.villalobos.caballoapp.ui.achievements.AchievementsActivity
-import com.villalobos.caballoapp.ui.gamification.GamificationActivity
 import com.villalobos.caballoapp.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,7 +29,15 @@ class MainActivity : AccessibilityActivity() {
     private lateinit var binding: ActivityMainBinding
     
     override fun applyActivityAccessibilityColors() {
-        // No hacer nada pesado aquí - el fondo ya se aplica en AccessibilityActivity
+        ErrorHandler.safeExecute(
+            context = this,
+            errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
+            errorMessage = "Error al aplicar colores de accesibilidad específicos de la actividad"
+        ) {
+            val config = AccesibilityHelper.getAccessibilityConfig(this)
+            AccesibilityHelper.applySpecificColorblindColors(this, window.decorView, config.colorblindType)
+            AccesibilityHelper.applyBackgroundGradient(this, window.decorView, config.colorblindType)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +48,7 @@ class MainActivity : AccessibilityActivity() {
 
         setupUI()
         observeViewModel()
+        aplicarConfiguracionAccesibilidad()
     }
 
     private fun setupUI() {
@@ -56,10 +67,6 @@ class MainActivity : AccessibilityActivity() {
 
         binding.btnSalir.setOnClickListener {
             viewModel.exitApp()
-        }
-
-        binding.statsCard.setOnClickListener {
-            startActivity(Intent(this, GamificationActivity::class.java))
         }
     }
 
@@ -91,24 +98,34 @@ class MainActivity : AccessibilityActivity() {
         }
 
         // Observar si debe mostrar tutorial
-        viewModel.shouldShowTutorial.observe(this) { shouldShow ->
-            if (shouldShow) {
+        viewModel.shouldShowTutorial.observe(this) { show ->
+            if (show) {
                 viewModel.navigateToTutorial()
             }
         }
 
         // Observar estadísticas del usuario
-        viewModel.userStats.observe(this) { stats ->
-            binding.tvLevel.text = stats.level.toString()
-            binding.tvXp.text = stats.totalXp.toString()
-            binding.tvStreak.text = "${stats.studyStreak} días"
+        viewModel.userLevel.observe(this) { level ->
+            binding.tvLevel.text = level.toString()
+        }
+
+        viewModel.userXp.observe(this) { xp ->
+            binding.tvXp.text = xp.toString()
+        }
+
+        viewModel.userStreak.observe(this) { streak ->
+            binding.tvStreak.text = "$streak días"
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-        // Recargar estadísticas al volver (por si completó un quiz)
-        viewModel.loadUserStats()
+    
+    private fun aplicarConfiguracionAccesibilidad() {
+        ErrorHandler.safeExecute(
+            context = this,
+            errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
+            errorMessage = "Error al aplicar configuración de accesibilidad"
+        ) {
+            AccesibilityHelper.applyAccessibilityColorsToApp(this)
+        }
     }
 
     // Funciones legacy mantenidas por compatibilidad con XML onClick

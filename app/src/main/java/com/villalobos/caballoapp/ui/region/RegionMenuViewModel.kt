@@ -130,6 +130,13 @@ class RegionMenuViewModel @Inject constructor(
     }
 
     /**
+     * Navega a la región distal.
+     */
+    fun navigateToDistal() {
+        selectRegion(TipoRegion.REGION_DISTAL)
+    }
+
+    /**
      * Limpia el evento actual.
      */
     fun clearEvent() {

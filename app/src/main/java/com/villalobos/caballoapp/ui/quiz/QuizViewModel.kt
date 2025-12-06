@@ -9,7 +9,6 @@ import com.villalobos.caballoapp.data.source.AchievementData
 import com.villalobos.caballoapp.data.model.QuizQuestion
 import com.villalobos.caballoapp.data.source.UserStats
 import com.villalobos.caballoapp.data.repository.QuizRepository
-import com.villalobos.caballoapp.data.repository.AchievementRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,8 +20,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class QuizViewModel @Inject constructor(
-    private val repository: QuizRepository,
-    private val achievementRepository: AchievementRepository
+    private val repository: QuizRepository
 ) : ViewModel() {
 
     // ============ Estados del Quiz ============
@@ -76,9 +74,6 @@ class QuizViewModel @Inject constructor(
 
     private val _userStats = MutableLiveData<UserStats>()
     val userStats: LiveData<UserStats> = _userStats
-
-    private val _newAchievements = MutableLiveData<List<Achievement>>()
-    val newAchievements: LiveData<List<Achievement>> = _newAchievements
 
     private var regionId: Int? = null
 
@@ -206,9 +201,6 @@ class QuizViewModel @Inject constructor(
     }
 
     private fun completeQuiz(state: QuizState) {
-        // Marcar como inactivo inmediatamente
-        _quizState.value = state.copy(isActive = false, isCompleted = true)
-        
         val correctAnswers = state.answers.zip(state.questions).count { (answer, question) ->
             answer == question.correctAnswer
         }
@@ -231,26 +223,14 @@ class QuizViewModel @Inject constructor(
             regionId = regionId
         )
 
-        // Obtener estadísticas ANTES de guardar (para comparar)
-        val oldStats = repository.getUserStats()
-
-        // Guardar resultado en el repository (esto actualiza las stats)
+        // Guardar resultado en el repository
         repository.saveQuizResult(score, regionId, totalTime)
-
-        // Obtener estadísticas DESPUÉS de guardar
-        val newStats = repository.getUserStats()
-
-        // Verificar nuevos logros desbloqueados
-        val unlocked = achievementRepository.getNewlyUnlockedAchievements(oldStats, newStats)
-        if (unlocked.isNotEmpty()) {
-            _newAchievements.value = unlocked
-        }
 
         // Notificar resultado
         _quizEvent.value = QuizEvent.QuizCompleted(result)
 
         // Actualizar estadísticas
-        _userStats.value = newStats
+        loadUserStats()
     }
 
     // ============ Helpers públicos ============
@@ -280,7 +260,7 @@ class QuizViewModel @Inject constructor(
      */
     fun getUnlockedAchievements(): List<Achievement> {
         val stats = _userStats.value ?: repository.getUserStats()
-        return achievementRepository.getUnlockedAchievements(stats)
+        return AchievementData.getUnlockedAchievements(stats)
     }
 }
 

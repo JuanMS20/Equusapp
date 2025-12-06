@@ -16,19 +16,41 @@
     
     <!-- Título Principal (H1) -->
     <style name="TextAppearance.EquusApp.Headline1" parent="TextAppearance.EquusApp">
-        <item name="android:textSize">@dimen/text_size_h1</item>
+        <item name="android:textSize">32sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:letterSpacing">-0.02</item>
-        <item name="android:lineSpacingMultiplier">1.2</item>
+        <item name="android:fontFamily">serif</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:lineSpacingMultiplier">1.1</item>
+        <item name="android:shadowColor">#40000000</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">2</item>
+        <item name="android:shadowRadius">4</item>
     </style>
     
     <!-- Título Secundario (H2) -->
     <style name="TextAppearance.EquusApp.Headline2">
         <item name="android:textSize">@dimen/text_size_h2</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:fontFamily">serif</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+
+    <!-- Stats Number Style -->
+    <style name="TextAppearance.EquusApp.StatsNumber">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textColor">@color/primary_brown</item>
+    </style>
+
+    <!-- Stats Label Style -->
+    <style name="TextAppearance.EquusApp.StatsLabel">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:textAllCaps">true</item>
     </style>
     
     <!-- Título de Sección (H3) -->

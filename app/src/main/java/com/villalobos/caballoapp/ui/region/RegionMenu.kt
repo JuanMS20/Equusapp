@@ -61,6 +61,10 @@ class RegionMenu : BaseNavigationActivity() {
         binding.btnRegionPelvica.setOnClickListener {
             viewModel.navigateToPelvica()
         }
+
+        binding.btnRegionDistal.setOnClickListener {
+            viewModel.navigateToDistal()
+        }
     }
 
     private fun observeViewModel() {
@@ -93,6 +97,7 @@ class RegionMenu : BaseNavigationActivity() {
             TipoRegion.TRONCO -> Intent(this, RegionTronco::class.java)
             TipoRegion.MIEMBROS_TORACICOS -> Intent(this, RegionToracica::class.java)
             TipoRegion.MIEMBROS_PELVICOS -> Intent(this, RegionPelvica::class.java)
+            TipoRegion.REGION_DISTAL -> Intent(this, RegionDistal::class.java)
         }
         intent.putExtra("REGION_ID", regionId)
         startActivity(intent)

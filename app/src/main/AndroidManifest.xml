@@ -23,6 +23,9 @@
             android:name=".ui.region.RegionPelvica"
             android:exported="false" />
         <activity
+            android:name=".ui.region.RegionDistal"
+            android:exported="false" />
+        <activity
             android:name=".ui.region.RegionToracica"
             android:exported="false" />
         <activity
@@ -61,18 +64,6 @@
             android:exported="false" />
         <activity
             android:name=".ui.main.MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.achievements.AchievementsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.gamification.GamificationActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.stats.StatsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.quiz.QuizResultActivity"
             android:exported="false" />
     </application>
 

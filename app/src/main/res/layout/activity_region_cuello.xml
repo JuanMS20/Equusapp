@@ -6,9 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
-    tools:context=".RegionCuello">
+    tools:context=".ui.region.RegionCuello">
 
     <!-- Header Card Modernizado -->
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/headerCard"
         android:layout_width="0dp"
@@ -76,14 +77,110 @@
         app:layout_constraintTop_toBottomOf="@+id/headerCard"
         app:layout_constraintHeight_percent="0.40">
 
-        <com.villalobos.caballoapp.ui.components.InteractiveAnatomyView
-            android:id="@+id/imgRegion"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:src="@drawable/zona_cervico_lateral"
-            android:padding="@dimen/spacing_sm"
-            android:contentDescription="@string/anatomia_interactiva_description" />
+            android:layout_height="match_parent">
+
+            <com.villalobos.caballoapp.ui.components.InteractiveAnatomyView
+                android:id="@+id/imgRegion"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/zona_cervico_lateral"
+                android:padding="@dimen/spacing_sm"
+                android:contentDescription="@string/anatomia_interactiva_description" />
+
+            <!-- Zona 2001: Cérvico Lateral -->
+            <View
+                android:id="@+id/hotspotZona2001"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="#60FF0000"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.2"
+                app:layout_constraintVertical_bias="0.5" />
+
+            <!-- Zona 2002: Cérvico Dorsal -->
+            <View
+                android:id="@+id/hotspotZona2002"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="#6000FF00"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.4"
+                app:layout_constraintVertical_bias="0.3" />
+
+            <!-- Zona 2003: Preescapular -->
+            <View
+                android:id="@+id/hotspotZona2003"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="#600000FF"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.6"
+                app:layout_constraintVertical_bias="0.5" />
+
+            <!-- Zona 2004: Cérvico Ventral -->
+            <View
+                android:id="@+id/hotspotZona2004"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="#60FFFF00"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.4"
+                app:layout_constraintVertical_bias="0.7" />
+
+            <!-- Zona 2005: Laríngea -->
+            <View
+                android:id="@+id/hotspotZona2005"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="#60FF00FF"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.1"
+                app:layout_constraintVertical_bias="0.8" />
+
+            <!-- Zona 2006: Faríngea -->
+            <View
+                android:id="@+id/hotspotZona2006"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="#6000FFFF"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.15"
+                app:layout_constraintVertical_bias="0.6" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
 

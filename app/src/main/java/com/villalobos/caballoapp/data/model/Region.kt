@@ -16,5 +16,6 @@ enum class TipoRegion(val id: Int, val nombreCompleto: String, val codigoColor: 
     CUELLO(2, "Región del Cuello", "#B8956A", "cuello_y_torax"),
     TRONCO(3, "Región del Tronco", "#FFA500", "torsoequino"),
     MIEMBROS_TORACICOS(4, "Miembros Torácicos", "#C8A882", "hombro_miembro_anterior"),
-    MIEMBROS_PELVICOS(5, "Región Pélvica", "#A0825C", "2- MusculoGluteoMedio.png")
+    MIEMBROS_PELVICOS(5, "Región Pélvica", "#A0825C", "2- MusculoGluteoMedio.png"),
+    REGION_DISTAL(6, "Región Distal (Casco)", "#8D6E63", "miembro_distal")
 } 

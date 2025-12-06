@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
-    tools:context=".RegionToracica">
+    tools:context=".ui.region.RegionToracica">
 
     <!-- Header Card Modernizado -->
     <com.google.android.material.card.MaterialCardView
@@ -76,14 +76,110 @@
         app:layout_constraintTop_toBottomOf="@+id/headerCard"
         app:layout_constraintHeight_percent="0.40">
 
-        <com.villalobos.caballoapp.ui.components.InteractiveAnatomyView
-            android:id="@+id/imgRegion"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:src="@drawable/musculo_supraespinoso"
-            android:padding="@dimen/spacing_sm"
-            android:contentDescription="@string/anatomia_interactiva_description" />
+            android:layout_height="match_parent">
+
+            <com.villalobos.caballoapp.ui.components.InteractiveAnatomyView
+                android:id="@+id/imgRegion"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/musculo_supraespinoso"
+                android:padding="@dimen/spacing_sm"
+                android:contentDescription="@string/anatomia_interactiva_description" />
+
+            <!-- Zona 4001: Escapular -->
+            <View
+                android:id="@+id/hotspotZona4001"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="#60FF0000"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.2"
+                app:layout_constraintVertical_bias="0.2" />
+
+            <!-- Zona 4002: Dorsal Escapular -->
+            <View
+                android:id="@+id/hotspotZona4002"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="#6000FF00"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.4"
+                app:layout_constraintVertical_bias="0.2" />
+
+            <!-- Zona 4003: Braquial -->
+            <View
+                android:id="@+id/hotspotZona4003"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="#600000FF"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.6"
+                app:layout_constraintVertical_bias="0.4" />
+
+            <!-- Zona 4004: Olecraneana -->
+            <View
+                android:id="@+id/hotspotZona4004"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="#60FFFF00"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.3"
+                app:layout_constraintVertical_bias="0.5" />
+
+            <!-- Zona 4005: Antebraquial -->
+            <View
+                android:id="@+id/hotspotZona4005"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="#60FF00FF"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintVertical_bias="0.7" />
+
+            <!-- Zona 4006: Metacarpiana -->
+            <View
+                android:id="@+id/hotspotZona4006"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="#6000FFFF"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintVertical_bias="0.9" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
 

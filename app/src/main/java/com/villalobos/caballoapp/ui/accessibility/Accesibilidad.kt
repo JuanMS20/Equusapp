@@ -12,6 +12,7 @@ import com.villalobos.caballoapp.R
 import com.villalobos.caballoapp.ui.base.AccessibilityActivity
 import com.villalobos.caballoapp.util.AccesibilityHelper
 import com.villalobos.caballoapp.util.ErrorHandler
+import com.villalobos.caballoapp.data.model.ColorblindType
 import com.villalobos.caballoapp.databinding.ActivityAccesibilidadBinding
 import com.villalobos.caballoapp.ui.tutorial.TutorialActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,7 +36,7 @@ class Accesibilidad : AccessibilityActivity() {
             errorMessage = "Error al aplicar colores de accesibilidad específicos de la actividad"
         ) {
             val state = viewModel.state.value
-            val colorblindType = state?.colorblindType ?: AccesibilityHelper.ColorblindType.NONE
+            val colorblindType = state?.colorblindType ?: ColorblindType.NONE
             AccesibilityHelper.applySpecificColorblindColors(this, window.decorView, colorblindType)
             AccesibilityHelper.applyBackgroundGradient(this, window.decorView, colorblindType)
         }
@@ -66,11 +67,11 @@ class Accesibilidad : AccessibilityActivity() {
     private fun setupUI() {
         // Configurar listeners para RadioButtons
         val radioButtons = listOf(
-            binding.rbNormal to AccesibilityHelper.ColorblindType.NONE,
-            binding.rbProtanopia to AccesibilityHelper.ColorblindType.PROTANOPIA,
-            binding.rbDeuteranopia to AccesibilityHelper.ColorblindType.DEUTERANOPIA,
-            binding.rbTritanopia to AccesibilityHelper.ColorblindType.TRITANOPIA,
-            binding.rbAcromatopsia to AccesibilityHelper.ColorblindType.ACHROMATOPSIA
+            binding.rbNormal to ColorblindType.NONE,
+            binding.rbProtanopia to ColorblindType.PROTANOPIA,
+            binding.rbDeuteranopia to ColorblindType.DEUTERANOPIA,
+            binding.rbTritanopia to ColorblindType.TRITANOPIA,
+            binding.rbAcromatopsia to ColorblindType.ACHROMATOPSIA
         )
         
         radioButtons.forEach { (radioButton, type) ->
@@ -93,12 +94,12 @@ class Accesibilidad : AccessibilityActivity() {
         binding.rgModosDaltonismo.setOnCheckedChangeListener { _, checkedId ->
             if (checkedId != -1) {
                 val type = when (checkedId) {
-                    R.id.rbNormal -> AccesibilityHelper.ColorblindType.NONE
-                    R.id.rbProtanopia -> AccesibilityHelper.ColorblindType.PROTANOPIA
-                    R.id.rbDeuteranopia -> AccesibilityHelper.ColorblindType.DEUTERANOPIA
-                    R.id.rbTritanopia -> AccesibilityHelper.ColorblindType.TRITANOPIA
-                    R.id.rbAcromatopsia -> AccesibilityHelper.ColorblindType.ACHROMATOPSIA
-                    else -> AccesibilityHelper.ColorblindType.NONE
+                    R.id.rbNormal -> ColorblindType.NONE
+                    R.id.rbProtanopia -> ColorblindType.PROTANOPIA
+                    R.id.rbDeuteranopia -> ColorblindType.DEUTERANOPIA
+                    R.id.rbTritanopia -> ColorblindType.TRITANOPIA
+                    R.id.rbAcromatopsia -> ColorblindType.ACHROMATOPSIA
+                    else -> ColorblindType.NONE
                 }
                 viewModel.setColorblindType(type)
                 viewModel.applyColorsPreview(this)
@@ -132,16 +133,16 @@ class Accesibilidad : AccessibilityActivity() {
         viewModel.state.observe(this) { state ->
             // Actualizar RadioButtons
             when (state.colorblindType) {
-                AccesibilityHelper.ColorblindType.NONE -> binding.rbNormal.isChecked = true
-                AccesibilityHelper.ColorblindType.PROTANOPIA -> binding.rbProtanopia.isChecked = true
-                AccesibilityHelper.ColorblindType.DEUTERANOPIA -> binding.rbDeuteranopia.isChecked = true
-                AccesibilityHelper.ColorblindType.TRITANOPIA -> binding.rbTritanopia.isChecked = true
-                AccesibilityHelper.ColorblindType.ACHROMATOPSIA -> binding.rbAcromatopsia.isChecked = true
+                ColorblindType.NONE, ColorblindType.NORMAL -> binding.rbNormal.isChecked = true
+                ColorblindType.PROTANOPIA -> binding.rbProtanopia.isChecked = true
+                ColorblindType.DEUTERANOPIA -> binding.rbDeuteranopia.isChecked = true
+                ColorblindType.TRITANOPIA -> binding.rbTritanopia.isChecked = true
+                ColorblindType.ACHROMATOPSIA -> binding.rbAcromatopsia.isChecked = true
             }
             
             // Mostrar/ocultar botón de desactivar
             binding.btnDesactivarDaltonismo.visibility =
-                if (state.colorblindType != AccesibilityHelper.ColorblindType.NONE) View.VISIBLE
+                if (state.colorblindType != ColorblindType.NONE && state.colorblindType != ColorblindType.NORMAL) View.VISIBLE
                 else View.GONE
 
             // Actualizar vista previa de colores
@@ -174,7 +175,7 @@ class Accesibilidad : AccessibilityActivity() {
         }
     }
     
-    private fun actualizarVistaPreviaColores(colorblindType: AccesibilityHelper.ColorblindType) {
+    private fun actualizarVistaPreviaColores(colorblindType: ColorblindType) {
         val colors = viewModel.getPreviewColors()
         if (colors.size >= 4) {
             binding.previewColor1.setBackgroundColor(colors[0])

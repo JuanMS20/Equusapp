@@ -93,53 +93,18 @@ class CorrectAnswersActivity : AppCompatActivity() {
         }
     }
 
-    private fun createQuestionCard(questionText: String, correctAnswer: String, questionNumber: Int): CardView {
-        val cardView = CardView(this)
-        val layoutParams = FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            FrameLayout.LayoutParams.WRAP_CONTENT
-        )
-        layoutParams.setMargins(16, 16, 16, 16)
-        cardView.layoutParams = layoutParams
+    private fun createQuestionCard(questionText: String, correctAnswer: String, questionNumber: Int): android.view.View {
+        val view = layoutInflater.inflate(R.layout.item_correct_answer, binding.answersContainer, false)
         
-        // Configurar estilo del card
-        cardView.cardElevation = 4f
-        cardView.radius = 12f
-        cardView.setContentPadding(24, 24, 24, 24)
-        cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.warm_cream))
+        val tvQuestionNumber = view.findViewById<TextView>(R.id.tvQuestionNumber)
+        val tvQuestionText = view.findViewById<TextView>(R.id.tvQuestionText)
+        val tvCorrectAnswer = view.findViewById<TextView>(R.id.tvCorrectAnswer)
         
-        // Crear contenido del card
-        val linearLayout = androidx.appcompat.widget.LinearLayoutCompat(this)
-        linearLayout.orientation = androidx.appcompat.widget.LinearLayoutCompat.VERTICAL
+        tvQuestionNumber.text = "Pregunta $questionNumber"
+        tvQuestionText.text = questionText
+        tvCorrectAnswer.text = correctAnswer
         
-        // TextView para el número de pregunta
-        val questionNumberText = TextView(this)
-        questionNumberText.text = "Pregunta $questionNumber"
-        questionNumberText.textSize = 16f
-        questionNumberText.setTextColor(ContextCompat.getColor(this, R.color.primary_brown))
-        questionNumberText.setTypeface(null, android.graphics.Typeface.BOLD)
-        linearLayout.addView(questionNumberText)
-        
-        // TextView para la pregunta
-        val questionTextView = TextView(this)
-        questionTextView.text = questionText
-        questionTextView.textSize = 14f
-        questionTextView.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
-        questionTextView.setPadding(0, 8, 0, 8)
-        linearLayout.addView(questionTextView)
-        
-        // TextView para la respuesta correcta
-        val correctAnswerTextView = TextView(this)
-        correctAnswerTextView.text = "Respuesta correcta: $correctAnswer"
-        correctAnswerTextView.textSize = 14f
-        correctAnswerTextView.setTextColor(ContextCompat.getColor(this, R.color.correct_green))
-        correctAnswerTextView.setTypeface(null, android.graphics.Typeface.BOLD)
-        correctAnswerTextView.setPadding(0, 8, 0, 0)
-        linearLayout.addView(correctAnswerTextView)
-        
-        cardView.addView(linearLayout)
-        
-        return cardView
+        return view
     }
 
     private fun setupBackButton() {

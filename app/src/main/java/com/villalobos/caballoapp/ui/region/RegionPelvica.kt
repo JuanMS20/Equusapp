@@ -1,8 +1,10 @@
 package com.villalobos.caballoapp.ui.region
 
+import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.villalobos.caballoapp.R
 import com.villalobos.caballoapp.ui.base.BaseRegionActivity
@@ -24,4 +26,21 @@ class RegionPelvica : BaseRegionActivity() {
     override fun getHomeButton(): ImageButton = enlace.btnHome
     override fun getQuizButton(): Button = enlace.btnQuizRegion
     override fun getDefaultRegionId(): Int = 5
+
+    override fun configurarHotspotsZonas() {
+        // Mapa de zonas: ID de vista -> ID de zona
+        val mapaZonas = mapOf(
+            enlace.hotspotZona5001 to 5001, // Sacra
+            enlace.hotspotZona5002 to 5002, // Glútea
+            enlace.hotspotZona5003 to 5003, // Isquiática
+            enlace.hotspotZona5004 to 5004, // Pierna
+            enlace.hotspotZona5005 to 5005  // Coccígea
+        )
+
+        mapaZonas.forEach { (vista, zonaId) ->
+            vista.setOnClickListener {
+                navegarADetalleZona(zonaId)
+            }
+        }
+    }
 }

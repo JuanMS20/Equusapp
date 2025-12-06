@@ -190,7 +190,20 @@
                 style="@style/Widget.EquusApp.Button.Secondary"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height"
+                android:layout_marginBottom="@dimen/spacing_sm"
                 android:text="Región Pélvica"
+                android:textAllCaps="false"
+                app:icon="@drawable/ic_arrow_right"
+                app:iconGravity="end"
+                app:iconTint="@color/primary_brown" />
+
+            <!-- Botón Región Distal -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRegionDistal"
+                style="@style/Widget.EquusApp.Button.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:text="Región Distal (Casco)"
                 android:textAllCaps="false"
                 app:icon="@drawable/ic_arrow_right"
                 app:iconGravity="end"

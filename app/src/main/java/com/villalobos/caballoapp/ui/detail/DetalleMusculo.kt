@@ -10,6 +10,9 @@ import com.villalobos.caballoapp.util.AccesibilityHelper
 import com.villalobos.caballoapp.databinding.ActivityDetalleMusculoBinding
 import dagger.hilt.android.AndroidEntryPoint
 
+import com.villalobos.caballoapp.data.source.DatosMusculares
+import com.villalobos.caballoapp.util.ProgressionManager
+
 /**
  * Activity para mostrar el detalle de un músculo.
  * Usa arquitectura MVVM con Hilt para inyección de dependencias.
@@ -21,6 +24,7 @@ class DetalleMusculo : BaseNavigationActivity() {
     private val viewModel: DetalleMusculoViewModel by viewModels()
     
     private lateinit var binding: ActivityDetalleMusculoBinding
+    private var regionId: Int = 1 // Default to 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +35,7 @@ class DetalleMusculo : BaseNavigationActivity() {
 
             // Obtener parámetros y cargar datos
             val musculoId = intent.getIntExtra("MUSCULO_ID", 0)
-            val regionId = intent.getIntExtra("REGION_ID", 1)
+            regionId = intent.getIntExtra("REGION_ID", 1)
             
             viewModel.loadMusculo(musculoId, regionId)
 
@@ -77,6 +81,18 @@ class DetalleMusculo : BaseNavigationActivity() {
 
                     // Configurar imagen
                     configurarImagenMusculo(state.imageName)
+                    
+                    // Marcar como completado en el sistema de progresión
+                    try {
+                        val musclesInRegion = DatosMusculares.obtenerMusculosPorRegion(regionId)
+                        val index = musclesInRegion.indexOfFirst { it.id == musculo.id }
+                        if (index != -1) {
+                            ProgressionManager.markAsCompleted(this, regionId, index)
+                        }
+                    } catch (e: Exception) {
+                        // Ignorar error en progresión para no afectar la experiencia principal
+                        e.printStackTrace()
+                    }
                 }
             }
 
@@ -119,15 +135,6 @@ class DetalleMusculo : BaseNavigationActivity() {
                         userMessage = "Imagen no disponible, mostrando predeterminada",
                         canRecover = true
                     )
-                    viewModel.clearEvent()
-                }
-                is DetalleMusculoViewModel.DetalleEvent.XPEarned -> {
-                    // Mostrar notificación de XP ganada por estudiar nuevo músculo
-                    android.widget.Toast.makeText(
-                        this,
-                        "¡+${event.amount} XP por estudiar ${event.muscleName}!",
-                        android.widget.Toast.LENGTH_SHORT
-                    ).show()
                     viewModel.clearEvent()
                 }
                 null -> { /* No action */ }

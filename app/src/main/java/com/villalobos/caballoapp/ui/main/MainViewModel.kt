@@ -5,10 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import com.villalobos.caballoapp.data.repository.QuizRepository
-import com.villalobos.caballoapp.data.source.UserStats
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -18,12 +14,14 @@ import javax.inject.Named
  */
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    @Named("tutorial_prefs") private val sharedPreferences: SharedPreferences,
-    private val quizRepository: QuizRepository
+    @Named("tutorial_prefs") private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
     companion object {
         private const val KEY_NO_MOSTRAR_TUTORIAL = "no_mostrar_tutorial"
+        private const val KEY_USER_LEVEL = "user_level"
+        private const val KEY_USER_XP = "user_xp"
+        private const val KEY_USER_STREAK = "user_streak"
     }
 
     // ============ Estados ============
@@ -44,14 +42,27 @@ class MainViewModel @Inject constructor(
     private val _shouldShowTutorial = MutableLiveData<Boolean>()
     val shouldShowTutorial: LiveData<Boolean> = _shouldShowTutorial
 
-    private val _userStats = MutableLiveData<UserStats>()
-    val userStats: LiveData<UserStats> = _userStats
+    // Stats del usuario
+    private val _userLevel = MutableLiveData<Int>(1)
+    val userLevel: LiveData<Int> = _userLevel
+
+    private val _userXp = MutableLiveData<Int>(0)
+    val userXp: LiveData<Int> = _userXp
+
+    private val _userStreak = MutableLiveData<Int>(0)
+    val userStreak: LiveData<Int> = _userStreak
 
     // ============ Inicialización ============
 
     init {
         checkFirstTimeUser()
         loadUserStats()
+    }
+
+    private fun loadUserStats() {
+        _userLevel.value = sharedPreferences.getInt(KEY_USER_LEVEL, 1)
+        _userXp.value = sharedPreferences.getInt(KEY_USER_XP, 0)
+        _userStreak.value = sharedPreferences.getInt(KEY_USER_STREAK, 0)
     }
 
     // ============ Acciones ============
@@ -82,12 +93,6 @@ class MainViewModel @Inject constructor(
             .putBoolean(KEY_NO_MOSTRAR_TUTORIAL, false)
             .apply()
         _shouldShowTutorial.value = true
-    }
-
-    fun loadUserStats() {
-        viewModelScope.launch {
-            _userStats.value = quizRepository.getUserStats()
-        }
     }
 
     // ============ Navegación ============

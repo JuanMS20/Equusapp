@@ -19,6 +19,10 @@ import com.villalobos.caballoapp.ui.quiz.QuizActivity
 import com.villalobos.caballoapp.ui.detail.DetalleMusculo
 import dagger.hilt.android.AndroidEntryPoint
 
+import android.widget.Toast
+import com.villalobos.caballoapp.data.source.DatosMusculares
+import com.villalobos.caballoapp.util.ProgressionManager
+
 /**
  * Clase base abstracta para todas las actividades de región.
  * Proporciona funcionalidad común para mostrar músculos, hotspots y navegación.
@@ -42,6 +46,9 @@ abstract class BaseRegionActivity : AccessibilityActivity() {
     protected abstract fun getQuizButton(): Button
     protected abstract fun getDefaultRegionId(): Int
 
+    // Método opcional para configurar hotspots de zonas (override en subclases)
+    protected open fun configurarHotspotsZonas() {}
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -60,6 +67,9 @@ abstract class BaseRegionActivity : AccessibilityActivity() {
 
             // Configurar hotspots cuando la imagen esté lista
             configurarHotspots()
+            
+            // Configurar hotspots de zonas (si aplica)
+            configurarHotspotsZonas()
 
             // Configurar botones de navegación
             configurarBotonesNavegacion()
@@ -73,6 +83,57 @@ abstract class BaseRegionActivity : AccessibilityActivity() {
                 canRecover = true,
                 recoveryAction = { finish() }
             )
+        }
+    }
+
+    /**
+     * Navega al detalle de una zona específica, verificando el progreso.
+     */
+    protected fun navegarADetalleZona(zonaId: Int) {
+        // Buscar el primer músculo de la zona para mostrar el detalle
+        val subZonas = DatosMusculares.obtenerSubZonasPorRegion(regionId)
+        val zona = subZonas.find { it.id == zonaId }
+        
+        if (zona != null && zona.musculos.isNotEmpty()) {
+            val primerMusculo = zona.musculos.first()
+            
+            // Verificar si el músculo está desbloqueado
+            val allMuscles = DatosMusculares.obtenerMusculosPorRegion(regionId)
+            val index = allMuscles.indexOfFirst { it.id == primerMusculo.id }
+            
+            if (ProgressionManager.isUnlocked(this, regionId, index)) {
+                val intent = Intent(this, DetalleMusculo::class.java).apply {
+                    putExtra("MUSCULO_ID", primerMusculo.id)
+                    putExtra("REGION_ID", regionId)
+                    putExtra("ZONA_ID", zonaId)
+                }
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Debes completar el tema anterior para desbloquear este.", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(this, "Zona: ${zona?.nombre ?: "Desconocida"}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        
+        // Refrescar la lista para actualizar estados de desbloqueo
+        if (::adaptadorMusculos.isInitialized) {
+            adaptadorMusculos.notifyDataSetChanged()
+        }
+
+        ErrorHandler.safeExecute(
+            context = this,
+            errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
+            errorMessage = "Error al reanudar actividad"
+        ) {
+            // Verificar que los datos sigan siendo válidos
+            if (musculos.isEmpty()) {
+                regionViewModel.loadRegion(regionId)
+            }
         }
     }
 
@@ -158,7 +219,7 @@ abstract class BaseRegionActivity : AccessibilityActivity() {
             errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
             errorMessage = "Error al configurar lista de músculos"
         ) {
-            adaptadorMusculos = AdaptadorMusculos(musculos) { musculo ->
+            adaptadorMusculos = AdaptadorMusculos(musculos, regionId) { musculo ->
                 regionViewModel.navigateToMuscleDetail(musculo)
             }
 
@@ -260,20 +321,7 @@ abstract class BaseRegionActivity : AccessibilityActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
 
-        ErrorHandler.safeExecute(
-            context = this,
-            errorType = ErrorHandler.ErrorType.UNKNOWN_ERROR,
-            errorMessage = "Error al reanudar actividad"
-        ) {
-            // Verificar que los datos sigan siendo válidos
-            if (musculos.isEmpty()) {
-                regionViewModel.loadRegion(regionId)
-            }
-        }
-    }
 
     protected open fun aplicarAccesibilidadVisual() {
         ErrorHandler.safeExecute(
@@ -324,9 +372,6 @@ abstract class BaseRegionActivity : AccessibilityActivity() {
 
     override fun onDestroy() {
         try {
-            // Limpiar la InteractiveAnatomyView para cancelar runnables pendientes
-            getRegionImageView().clearMusculos()
-            
             super.onDestroy()
         } catch (e: Exception) {
             ErrorHandler.handleError(

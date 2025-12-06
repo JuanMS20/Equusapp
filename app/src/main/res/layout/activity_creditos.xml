@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
-    tools:context=".Creditos">
+    tools:context=".ui.credits.Creditos">
 
     <!-- Header Card con estilo modernizado -->
     <com.google.android.material.card.MaterialCardView
